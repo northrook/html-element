@@ -2,7 +2,7 @@
 
 declare( strict_types = 1 );
 
-namespace Northrook\HTML;
+namespace Northrook\HTML\Element;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Core\Trait\PropertyAccessor;

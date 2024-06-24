@@ -1,6 +1,6 @@
 <?php
 
-namespace Northrook\HTML;
+namespace Northrook\HTML\Element;
 
 
 use Northrook\Core\Interface\Printable;

@@ -2,7 +2,9 @@
 
 namespace Northrook\HTML;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Core\Trait\PropertyAccessor;
+use Northrook\HTML\Element\{Attribute, Attributes, Content, Tag};
 use Northrook\Logger\Log;
 use function Northrook\Core\Function\normalizeKey;
 
@@ -27,17 +29,56 @@ class Element
     protected readonly Attributes $attributes;
     protected readonly Content    $content;
 
+    /**
+     *
+     * @param string      $tag
+     * @param array       $attributes
+     * @param mixed|null  $content
+     */
     public function __construct(
-        string $tag = 'div',
-        array  $attributes = [],
-        mixed  $content = null,
+        #[ExpectedValues( Tag::NAMES )]
+        string  $tag = 'div',
+        ?string $id = null,
+        ?string $class = null,
+        ?string $style = null,
+        array   $attributes = [],
+        mixed   $content = null,
     ) {
+
+        $attributes['id']    ??= $id;
+        $attributes['class'] ??= $class;
+        $attributes['style'] ??= $style;
+
+        //
+        // $attributes = array_merge(
+        //     $attributes, [
+        //     'id'    => $id,
+        //     'class' => $class,
+        //     'style' => $style,
+        // ],
+        // );
+
+        $attributes = match ( $tag ) {
+            'button' => [ 'type' => 'button', ...$attributes, ],
+            default  => $attributes,
+        };
+
+        $attributes = array_filter( $attributes );
+
         $this->tag        = new Tag( $tag );
-        $this->attributes = new Attributes( $attributes );
+        $this->attributes = new Attributes( $attributes, $this );
         $this->content    = new Content( $content );
     }
 
+    /**
+     * @param string  $property
+     *
+     * @return null|Attribute|Attributes|Tag
+     */
     public function __get( string $property ) {
+
+        // __get is mainly used to facilitate editing attributes
+
         return match ( $property ) {
             'tag'                  => $this->tag,
             'id', 'class', 'style' => $this->attributes->edit( $property ),
@@ -171,8 +212,6 @@ class Element
                 $return[ trim( $property ) ] = trim( $value );
             }
         }
-
-        // dd($return);
         return $return;
     }
 }

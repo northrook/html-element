@@ -1,9 +1,10 @@
 <?php
 
-namespace Northrook\HTML;
+namespace Northrook\HTML\Element;
 
 use Countable, Stringable;
 use Northrook\Core\Trait\PropertyAccessor;
+use Northrook\HTML\Element;
 
 /**
  * @property-read Attribute $id
@@ -14,10 +15,14 @@ final class Attributes implements Countable, Stringable
 {
     use PropertyAccessor;
 
+    /**
+     * @var array{string, string|array<string>}
+     */
     private array $attributes = [];
 
     public function __construct(
-        array $attributes = [],
+        array                     $attributes = [],
+        private readonly ?Element $parent = null,
     ) {
         foreach ( $attributes as $name => $value ) {
             $this->add( $name, $value );
@@ -31,10 +36,10 @@ final class Attributes implements Countable, Stringable
             default => $this->attributes[ $name ] ?? null,
         };
 
-        return is_array($attribute) ? implode( ' ', $attribute ) : $attribute;
+        return is_array( $attribute ) ? implode( ' ', $attribute ) : $attribute;
     }
 
-    public function __get( string $property ) {
+    public function __get( string $property ) : ?Attribute {
         return match ( $property ) {
             'id', 'class', 'style' => $this->edit( $property ),
             default                => null,
@@ -42,7 +47,7 @@ final class Attributes implements Countable, Stringable
     }
 
     public function edit( string $attribute ) : Attribute {
-        return new Attribute( $attribute, $this );
+        return new Attribute( $attribute, $this, $this->parent );
     }
 
     /**
@@ -59,26 +64,24 @@ final class Attributes implements Countable, Stringable
      */
     public function add( string $name, mixed $value, bool $prepend = false ) : self {
 
-
         if ( isset( $this->attributes[ $name ] ) && !( $name === 'class' || $name === 'style' ) ) {
             return $this;
         }
 
         $this->attributes[ $name ] = match ( $name ) {
             'id'    => Element::id( $value ),
-            'class' => Element::classes(
-                $prepend
-                    ? [ $value, ...$this->attributes[ 'class' ] ?? [] ]
-                    : [ ...$this->attributes[ 'class' ] ?? [], $value ],
-            ),
-            'style' => Element::styles(
-                $prepend
-                    ? [ $value, ...$this->attributes[ 'style' ] ?? [] ]
-                    : [ ...$this->attributes[ 'style' ] ?? [], $value ],
-            ),
+            'class' => Element::classes( ... $this->getAttribute( 'class', $value, $prepend ) ),
+            'style' => Element::styles( ... $this->getAttribute( 'style', $value, $prepend ) ),
             default => $value,
         };
         return $this;
+    }
+
+    private function getAttribute( string $name, mixed $value, bool $prepend ) : array {
+        return match ( $prepend ) {
+            true  => [ $value, ...$this->attributes[ $name ] ?? [] ],
+            false => [ ...$this->attributes[ $name ] ?? [], $value ],
+        };
     }
 
     /**
@@ -168,7 +171,9 @@ final class Attributes implements Countable, Stringable
             // Format style attribute
             if ( $value && 'style' === $attribute ) {
                 $value = $this->getStyles( $value );
+                // dump( $value );
             }
+
 
             // Deduplicate class attribute
             if ( $value && 'class' === $attribute ) {
@@ -197,10 +202,6 @@ final class Attributes implements Countable, Stringable
         }
 
         return Attributes::sort( $attributes );
-    }
-
-    public function toString() : string {
-        return $this->__toString();
     }
 
     public function toArray() : array {
