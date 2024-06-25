@@ -42,10 +42,10 @@ Elements can be nested using the `$content` parameter.
 It accepts strings, Elements, and arrays of either.
 
 >[!IMPORTANT]
->The Element class does not escape provided content, so ensure you do so either before passing it, or later down the line.
+>The `Element` class does not escape provided `$content`, so ensure you do so either before passing it, or later down the line.
 
 ```php
-echo new Element( 'h1', [ 'class' => 'example classes' ], $basic);
+echo new Element( 'h1', [ 'class' => 'example classes' ], $basic );
 ```
 ```html
 <h1 class="example classes">
@@ -53,10 +53,14 @@ echo new Element( 'h1', [ 'class' => 'example classes' ], $basic);
 </h1>
 ```
 ```php
-$button = new Element( 'button', [ 'id' => 'Save Action' 'class' => 'btn icon' ], content: [
-    new Element( 'i', content: '<svg ... </svg>' ),
-    'Save'
-] );
+$button = new Element(
+    tag        : 'button',
+    attributes : [ 'id' => 'Save Action' 'class' => 'btn icon' ],
+    content    : [
+        new Element( 'i', content: '<svg ... </svg>' ),
+        'Save',
+    ]
+);
 
 echo $button;
 ```
