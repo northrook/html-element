@@ -13,7 +13,7 @@ This is a deliberate design decision to keep the package lightweight and perform
 > This package is still in development.
 >
 > While it is considered MVP and stable, it may still undergo breaking changes.
-> 
+
 > [!NOTE]
 > Documentation is still being written. 
 
@@ -32,7 +32,9 @@ namespace Northrook\HTML\Element;
 
 $basic = new Element( content: 'Hello World!' );
 
-// echo $basic;
+echo $basic;
+```
+```html
 <div>Hello World!</div>
 ```
 
@@ -43,20 +45,22 @@ It accepts strings, Elements, and arrays of either.
 >The Element class does not escape provided content, so ensure you do so either before passing it, or later down the line.
 
 ```php
-
-$title = new Element( 'h1', [ 'class' => 'example classes' ], $basic);
-
-// echo $title;
+echo new Element( 'h1', [ 'class' => 'example classes' ], $basic);
+```
+```html
 <h1 class="example classes">
     <div>Hello World!</div>
 </h1>
-
+```
+```php
 $button = new Element( 'button', [ 'id' => 'Save Action' 'class' => 'btn icon' ], content: [
     new Element( 'i', content: '<svg ... </svg>' ),
     'Save'
 ] );
 
-// echo $button;
+echo $button;
+```
+```html
 <button id="save-action" type="button" class="btn icon">
     <i>...</i>
     Save
