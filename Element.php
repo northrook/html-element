@@ -1,11 +1,14 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\HTML;
 
-use JetBrains\PhpStorm\ExpectedValues;
+use Northrook\Core\Interface\Printable;
+use  LogicException;
 use Northrook\Core\Trait\PropertyAccessor;
-use Northrook\HTML\Element\{Attribute, Attributes, Content, Tag};
 use Northrook\Logger\Log;
+use Northrook\HTML\Element\{Attribute, Attributes, Content, Tag};
 use function Northrook\Core\Function\normalizeKey;
 
 /**
@@ -14,11 +17,9 @@ use function Northrook\Core\Function\normalizeKey;
  * @property-read Attribute  $id
  * @property-read Attribute  $class
  * @property-read Attribute  $style
- * @property-read Attributes $attributes
- * @property-read Content    $content
  *
  */
-class Element
+class Element implements Printable
 {
     use PropertyAccessor;
 
@@ -26,48 +27,34 @@ class Element
     private string $html;
 
     protected readonly Tag        $tag;
-    protected readonly Attributes $attributes;
-    protected readonly Content    $content;
+    public readonly Attributes $attributes;
+    public readonly Content    $content;
+
 
     /**
      *
-     * @param string      $tag
-     * @param array       $attributes
-     * @param mixed|null  $content
+     * @param string  $tag  =  [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
+     * @param array   $attributes
+     * @param mixed   $content
      */
     public function __construct(
-        #[ExpectedValues( Tag::NAMES )]
-        string  $tag = 'div',
-        ?string $id = null,
-        ?string $class = null,
-        ?string $style = null,
-        array   $attributes = [],
-        mixed   $content = null,
+        string $tag = 'div',
+        array  $attributes = [],
+        mixed  $content = null,
     ) {
+        $this->tag        = new Tag( $tag );
+        $this->attributes = new Attributes( $this->elementAttributes( $attributes ), $this );
+        $this->content    = new Content( $content );
+    }
 
-        $attributes['id']    ??= $id;
-        $attributes['class'] ??= $class;
-        $attributes['style'] ??= $style;
+    private function elementAttributes( array $attributes ) : array {
 
-        //
-        // $attributes = array_merge(
-        //     $attributes, [
-        //     'id'    => $id,
-        //     'class' => $class,
-        //     'style' => $style,
-        // ],
-        // );
-
-        $attributes = match ( $tag ) {
+        $attributes = match ( $this->tag->name ) {
             'button' => [ 'type' => 'button', ...$attributes, ],
             default  => $attributes,
         };
 
-        $attributes = array_filter( $attributes );
-
-        $this->tag        = new Tag( $tag );
-        $this->attributes = new Attributes( $attributes, $this );
-        $this->content    = new Content( $content );
+        return array_filter( $attributes );
     }
 
     /**
@@ -75,15 +62,14 @@ class Element
      *
      * @return null|Attribute|Attributes|Tag
      */
-    public function __get( string $property ) {
+    public function __get( string $property ) : Attribute | Attributes | Tag | null {
 
         // __get is mainly used to facilitate editing attributes
 
         return match ( $property ) {
             'tag'                  => $this->tag,
             'id', 'class', 'style' => $this->attributes->edit( $property ),
-            'attributes'           => $this->attributes,
-            default                => null,
+            default                => throw new LogicException( 'Invalid property: ' . $property ),
         };
     }
 
@@ -98,6 +84,8 @@ class Element
 
     /**
      * Called just before the Element is printed as HTML.
+     *
+     * - Called in both {@see toString()} and {@see print()}.
      *
      * @return void
      */
@@ -118,10 +106,14 @@ class Element
         );
     }
 
-
     final public function __toString() : string {
         $this->build();
         return $this->html;
+    }
+
+    final public function toString() : ?string {
+        $this->onPrint();
+        return $this->html ?: null;
     }
 
     final public function print() : void {
@@ -129,6 +121,15 @@ class Element
         echo $this->__toString();
     }
 
+    public function prepend( string | Element $content ) : Element {
+        $this->content->prepend( $content );
+        return $this;
+    }
+
+    public function append( string | Element $content ) : Element {
+        $this->content->append( $content );
+        return $this;
+    }
 
     /**
      * Generates the HTML string for this Element.
@@ -152,7 +153,7 @@ class Element
 
         $value = is_callable( $value ) ? $value( ...$args ) : $value;
 
-        $this->attributes->set( $name, $value, $force );
+        $this->attributes->set( $name, $value );
 
         return $this;
     }

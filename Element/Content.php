@@ -1,17 +1,24 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\HTML\Element;
 
-
 use Northrook\Core\Interface\Printable;
+use Northrook\Core\Trait\PrintableClass;
+use Northrook\HTML\Element;
+use Stringable;
+use function array_filter, implode, is_array;
 
 /**
  */
 final class Content implements Printable
 {
+    use PrintableClass;
+
     private array $content = [];
 
-    public function __construct( null | string | \Stringable | array $content = null ) {
+    public function __construct( null | string | Stringable | array $content = null ) {
 
         if ( $content === null ) {
             return;
@@ -20,20 +27,44 @@ final class Content implements Printable
         $this->content = is_array( $content ) ? $content : [ 'content' => $content ];
     }
 
+    public function add( int | string $key, string | Element $content ) : void {
+
+        if ( is_int( $key ) ) {
+
+            if ( array_key_exists( $key, $this->content ) ) {
+
+                $insertPosition = $key;
+                $newElement     = $content;
+                $this->content  = array_merge(
+                    array_slice( $this->content, 0, $insertPosition ),
+                    [ $newElement ],
+                    array_slice( $this->content, $insertPosition ),
+                );
+                return;
+            }
+
+            $this->content[] = $content;
+            return;
+        }
+
+        $this->content[ $key ] = $content;
+    }
+
+
+    public function append( string | Element $content ) : void {
+        $this->content[] = $content;
+    }
+
+    public function prepend( string | Element $content ) : void {
+        $this->content = array_merge( [ $content ], $this->content );
+    }
+
 
     public function __toString() : string {
-        return Content::implode( ...$this->content );
+        return $this::implode( $this->content );
     }
 
-    public function toString() : ?string {
-        return $this->__toString() ?: null;
-    }
-
-    public function print() : void {
-        echo $this->__toString();
-    }
-
-    public static function implode( null | string | \Stringable | array ...$content ) : string {
+    public static function implode( null | string | Stringable | array ...$content ) : string {
 
         $array = [];
 

@@ -1,24 +1,67 @@
 # HTML Elements
 
-A collection of classes for generating HTML elements and their attributes.
+Generate HTML elements and their attributes.
 
 The motivation behind this package is to provide a simple way to generate HTML elements
-with sensible defaults, while being much more efficient than using the DomDocument class.
+with sensible defaults, while being more light-weight than the [DOMDocument class](https://www.php.net/manual/en/class.domdocument.php).
 
-Unlike the DomDocument class, this package does not provide a way fully traverse the DOM tree.
+Elements can be nested to create complex HTML structures, but unlike DOMDocument it does not provide a way fully traverse the DOM tree.
+
 This is a deliberate design decision to keep the package lightweight and performant.
+
+> [!IMPORTANT]
+> This package is still in development.
+>
+> While it is considered MVP and stable, it may still undergo breaking changes.
+> 
+> [!NOTE]
+> Documentation is still being written. 
+
+## Installation
+
+```bash
+composer require northrook/html-element
+``` 
+
+## Usage
+
+New elements can be created using the `Element` class:
 
 ```php
 namespace Northrook\HTML\Element;
 
-$button = new Northrook\HTML\Element\Button();
-$div = new Northrook\HTML\Element();
+$basic = new Element( content: 'Hello World!' );
 
-use Northrook\HTML\Element\Document;
-use Northrook\HTML\Element\Button;
-
-$document = new Document();
-
-
-
+// echo $basic;
+<div>Hello World!</div>
 ```
+
+Elements can be nested using the `$content` parameter.
+It accepts strings, Elements, and arrays of either.
+
+>[!IMPORTANT]
+>The Element class does not escape provided content, so ensure you do so either before passing it, or later down the line.
+
+```php
+
+$title = new Element( 'h1', [ 'class' => 'example classes' ], $basic);
+
+// echo $title;
+<h1 class="example classes">
+    <div>Hello World!</div>
+</h1>
+
+$button = new Element( 'button', [ 'id' => 'Save Action' 'class' => 'btn icon' ], content: [
+    new Element( 'i', content: '<svg ... </svg>' ),
+    'Save'
+] );
+
+// echo $button;
+<button id="save-action" type="button" class="btn icon">
+    <i>...</i>
+    Save
+</button>
+```
+
+## License
+[MIT](https://github.com/northrook/html-element/blob/main/LICENSE)

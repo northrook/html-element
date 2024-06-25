@@ -6,7 +6,7 @@ namespace Northrook\HTML\Element;
 
 use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\HTML\Element;
-use Stringable;
+use Stringable, LogicException;
 
 /**
  * @property-read string $value
@@ -39,7 +39,7 @@ final readonly class Attribute implements Stringable
     public function __get( string $property ) : ?string {
         return match ( $property ) {
             'value' => $this->__toString() ?: null,
-            default => null,
+            default => throw new LogicException( 'Invalid property: ' . $property ),
         };
     }
 

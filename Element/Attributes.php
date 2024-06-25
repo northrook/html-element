@@ -2,9 +2,10 @@
 
 namespace Northrook\HTML\Element;
 
-use Countable, Stringable;
+use Countable, Stringable, LogicException;
 use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\HTML\Element;
+use function str_contains, implode, explode, in_array, array_merge, array_key_exists, count;
 
 /**
  * @property-read Attribute $id
@@ -16,7 +17,7 @@ final class Attributes implements Countable, Stringable
     use PropertyAccessor;
 
     /**
-     * @var array{string, string|array<string>}
+     * @var array
      */
     private array $attributes = [];
 
@@ -42,7 +43,7 @@ final class Attributes implements Countable, Stringable
     public function __get( string $property ) : ?Attribute {
         return match ( $property ) {
             'id', 'class', 'style' => $this->edit( $property ),
-            default                => null,
+            default                => throw new LogicException( 'Invalid property: ' . $property ),
         };
     }
 
