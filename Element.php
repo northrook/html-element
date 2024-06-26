@@ -12,11 +12,11 @@ use Northrook\HTML\Element\{Attribute, Attributes, Content, Tag};
 use function Northrook\Core\Function\normalizeKey;
 
 /**
- * @property-read string     $html
- * @property-read Tag        $tag
- * @property-read Attribute  $id
- * @property-read Attribute  $class
- * @property-read Attribute  $style
+ * @property-read string    $html
+ * @property-read Tag       $tag
+ * @property-read Attribute $id
+ * @property-read Attribute $class
+ * @property-read Attribute $style
  *
  */
 class Element implements Printable
@@ -26,7 +26,7 @@ class Element implements Printable
     /** @var string Rendered HTML */
     private string $html;
 
-    protected readonly Tag        $tag;
+    protected readonly Tag     $tag;
     public readonly Attributes $attributes;
     public readonly Content    $content;
 
@@ -50,11 +50,32 @@ class Element implements Printable
     private function elementAttributes( array $attributes ) : array {
 
         $attributes = match ( $this->tag->name ) {
-            'button' => [ 'type' => 'button', ...$attributes, ],
-            default  => $attributes,
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6' => $this->headingAttributes( $this->tag->name, $attributes ),
+            'button'                           => [ 'type' => 'button', ...$attributes, ],
+            'input'                            => [ 'type' => 'text', ...$attributes, ],
+            'img'                              => [ 'alt' => '', ...$attributes, ],
+            default                            => $attributes,
         };
 
         return array_filter( $attributes );
+    }
+
+    /**
+     * Ensures heading elements have a class of the same name as the heading tag.
+     *
+     * This is used to apply the correct styling to the heading.
+     *
+     * The heading style may be used on other, non-heading elements,
+     * and in some cases a different heading style may be desired for a heading.
+     *
+     * @param string  $tag
+     * @param array   $attributes
+     *
+     * @return array
+     */
+    private function headingAttributes( string $tag, array $attributes ) : array {
+        $attributes[ 'class' ] = $tag . ' ' . $attributes[ 'class' ] ?? '';
+        return $attributes;
     }
 
     /**
@@ -113,7 +134,7 @@ class Element implements Printable
 
     final public function toString() : ?string {
         $this->onPrint();
-        return $this->html ?: null;
+        return $this->__toString() ?: null;
     }
 
     final public function print() : void {

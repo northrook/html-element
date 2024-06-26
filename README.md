@@ -55,7 +55,7 @@ echo new Element( 'h1', [ 'class' => 'example classes' ], $basic );
 ```php
 $button = new Element(
     tag        : 'button',
-    attributes : [ 'id' => 'Save Action' 'class' => 'btn icon' ],
+    attributes : [ 'id' => 'Save Action', 'class' => 'btn icon' ],
     content    : [
         new Element( 'i', content: '<svg ... </svg>' ),
         'Save',

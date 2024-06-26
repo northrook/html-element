@@ -2,7 +2,7 @@
   "name": "northrook/html-element",
   "type": "library",
   "description": "A collection of classes for generating HTML elements and their attributes.",
-  "license": "proprietary",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "Northrook\\HTML\\": ""
