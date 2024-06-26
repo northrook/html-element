@@ -74,7 +74,7 @@ class Element implements Printable
      * @return array
      */
     private function headingAttributes( string $tag, array $attributes ) : array {
-        $attributes[ 'class' ] = $tag . ' ' . $attributes[ 'class' ] ?? '';
+        $attributes[ 'class' ] = $tag . ' ' . ( $attributes[ 'class' ] ?? '');
         return $attributes;
     }
 
