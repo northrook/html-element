@@ -9,7 +9,15 @@ use Northrook\Core\Interface\Printable;
 use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\HTML\Element\{Attribute, Attributes, Content, Tag};
 use Northrook\Logger\Log;
+use function array_filter;
+use function explode;
+use function implode;
+use function is_callable;
+use function is_int;
+use function is_string;
 use function Northrook\Core\Function\normalizeKey;
+use function str_contains;
+use function trim;
 
 /**
  * @property-read string    $html
