@@ -24,7 +24,7 @@ final class Content implements Printable
             return;
         }
 
-        $this->content = is_array( $content ) ? $content : [ 'content' => $content ];
+        $this->content = array_filter( is_array( $content ) ? $content : [ 'content' => $content ] );
     }
 
     public function add( int | string $key, string | Element $content ) : void {

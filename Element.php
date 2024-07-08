@@ -4,11 +4,11 @@ declare( strict_types = 1 );
 
 namespace Northrook\HTML;
 
+use LogicException;
 use Northrook\Core\Interface\Printable;
-use  LogicException;
 use Northrook\Core\Trait\PropertyAccessor;
-use Northrook\Logger\Log;
 use Northrook\HTML\Element\{Attribute, Attributes, Content, Tag};
+use Northrook\Logger\Log;
 use function Northrook\Core\Function\normalizeKey;
 
 /**
@@ -24,7 +24,7 @@ class Element implements Printable
     use PropertyAccessor;
 
     /** @var string Rendered HTML */
-    private string $html;
+    protected string $html;
 
     protected readonly Tag     $tag;
     public readonly Attributes $attributes;
@@ -74,7 +74,7 @@ class Element implements Printable
      * @return array
      */
     private function headingAttributes( string $tag, array $attributes ) : array {
-        $attributes[ 'class' ] = $tag . ' ' . ( $attributes[ 'class' ] ?? '');
+        $attributes[ 'class' ] = $tag . ' ' . ( $attributes[ 'class' ] ?? '' );
         return $attributes;
     }
 
@@ -90,7 +90,8 @@ class Element implements Printable
         return match ( $property ) {
             'tag'                  => $this->tag,
             'id', 'class', 'style' => $this->attributes->edit( $property ),
-            default                => throw new LogicException( 'Invalid property: ' . $property ),
+            default                => $this->{$property} ??
+                                      throw new LogicException( 'Invalid property: ' . $property ),
         };
     }
 
