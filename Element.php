@@ -62,6 +62,7 @@ class Element implements Printable
             'button'                           => [ 'type' => 'button', ...$attributes, ],
             'input'                            => [ 'type' => 'text', ...$attributes, ],
             'img'                              => [ 'alt' => '', ...$attributes, ],
+            'link'                             => $this->linkAttributes( $attributes ),
             default                            => $attributes,
         };
 
@@ -86,6 +87,18 @@ class Element implements Printable
         return $attributes;
     }
 
+    private function linkAttributes( array $attributes ) : array {
+
+        if ( !isset( $attributes[ 'rel' ] ) && isset( $attributes[ 'href' ] ) ) {
+            $filename = strstr( basename( $attributes[ 'href' ] ), '?', true );
+            if ( str_ends_with( $filename, '.css' ) ) {
+                $attributes[ 'rel' ] = 'stylesheet';
+            }
+        }
+
+        return $attributes;
+    }
+
     /**
      * @param string  $property
      *
@@ -101,6 +114,11 @@ class Element implements Printable
             default                => $this->{$property} ??
                                       throw new LogicException( 'Invalid property: ' . $property ),
         };
+    }
+
+    final public function set( string $property, mixed $value ) : Element {
+        $this->attributes->set( $property, $value );
+        return $this;
     }
 
     /**
