@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\HTML\Element;
 
 use Countable, Stringable, LogicException;

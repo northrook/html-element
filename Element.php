@@ -15,7 +15,7 @@ use function implode;
 use function is_callable;
 use function is_int;
 use function is_string;
-use function Northrook\Core\Function\normalizeKey;
+use function Northrook\Core\normalizeKey;
 use function str_contains;
 use function trim;
 
