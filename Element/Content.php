@@ -50,15 +50,13 @@ final class Content implements Printable
         $this->content[ $key ] = $content;
     }
 
-
     public function append( string | Element $content ) : void {
-        $this->content[] = $content;
+        $this->content = array_merge( $this->content, [ $content ] );
     }
 
     public function prepend( string | Element $content ) : void {
         $this->content = array_merge( [ $content ], $this->content );
     }
-
 
     public function __toString() : string {
         return $this::implode( $this->content );

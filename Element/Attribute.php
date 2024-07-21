@@ -46,25 +46,25 @@ final readonly class Attribute implements Stringable
     /**
      * Add a value to the attribute.
      *
-     * @param string|array  $attribute  The value to add
-     * @param bool          $prepend    Optionally prepend classes and styles
+     * @param string|array  $value    The value to add
+     * @param bool          $prepend  Optionally prepend classes and styles
      *
      * @return Attributes|Element
      */
-    public function add( string | array $attribute, bool $prepend = false ) : Attributes | Element {
-        $this->attributes->add( $this->attribute, $attribute, $prepend );
+    public function add( string | array $value, bool $prepend = false ) : Attributes | Element {
+        $this->attributes->add( $this->attribute, $value, $prepend );
         return $this->element ?: $this->attributes;
     }
 
     /**
      * Set the value of the attribute.
      *
-     * @param string|array  $attribute  The value to set, This overrides the existing value.
+     * @param string|array  $value  The value to set, This overrides the existing value.
      *
      * @return Attributes|Element
      */
-    public function set( string | array $attribute ) : Attributes | Element {
-        $this->attributes->set( $this->attribute, $attribute );
+    public function set( string | array $value ) : Attributes | Element {
+        $this->attributes->set( $this->attribute, $value );
         return $this->element ?: $this->attributes;
     }
 

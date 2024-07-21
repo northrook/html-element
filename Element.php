@@ -109,6 +109,11 @@ class Element implements Printable
         };
     }
 
+    final public function tag( string $set ) : Element {
+        $this->tag->set( $set);
+        return $this;
+    }
+
     final public function set( string $property, mixed $value ) : Element {
         $this->attributes->set( $property, $value );
         return $this;
