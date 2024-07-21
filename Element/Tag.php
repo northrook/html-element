@@ -18,8 +18,9 @@ final class Tag implements Stringable
 
     public const TAGS = [
         'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option',
-        'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p',
-        'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4',
+        'script', 'style', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer',
+        'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr',
+        'h', 'h1', 'h2', 'h3', 'h4',
     ];
 
     private const SELF_CLOSING = [
