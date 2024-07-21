@@ -82,7 +82,8 @@ class Element implements Printable
     private function linkAttributes( array $attributes ) : array {
 
         if ( !isset( $attributes[ 'rel' ] ) && isset( $attributes[ 'href' ] ) ) {
-            $filename = strstr( basename( $attributes[ 'href' ] ), '?', true );
+            $filename = basename( $attributes[ 'href' ] );
+            $filename = strstr( $filename, '?', true ) ?: $filename;
             if ( str_ends_with( $filename, '.css' ) ) {
                 $attributes[ 'rel' ] = 'stylesheet';
             }
