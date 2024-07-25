@@ -59,11 +59,11 @@ final readonly class Attribute implements Stringable
     /**
      * Set the value of the attribute.
      *
-     * @param string|array  $value  The value to set, This overrides the existing value.
+     * @param string[]  $value  The value to set, This overrides the existing value.
      *
      * @return Attributes|Element
      */
-    public function set( string | array $value ) : Attributes | Element {
+    public function set( string  ...$value ) : Attributes | Element {
         $this->attributes->set( $this->attribute, $value );
         return $this->element ?: $this->attributes;
     }
