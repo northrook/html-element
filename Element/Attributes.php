@@ -161,7 +161,8 @@ final class Attributes implements Countable, Stringable
         return $styles;
     }
 
-    private function getAttributes() : array {
+    public function getAttributes( bool $returnValues = false ) : array {
+
         $attributes = [];
 
         foreach ( $this->attributes as $attribute => $value ) {
@@ -200,7 +201,7 @@ final class Attributes implements Countable, Stringable
 
             // Discard empty values, assign the attribute="value" as string
             else {
-                $attributes[ $attribute ] = "$attribute=\"$value\"";
+                $attributes[ $attribute ] = $returnValues ? $value : "$attribute=\"$value\"";
             }
         }
 
