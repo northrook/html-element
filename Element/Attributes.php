@@ -7,14 +7,13 @@ namespace Northrook\HTML\Element;
 use Countable, Stringable, LogicException;
 use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\HTML\Element;
-use function str_contains, implode, explode, in_array, array_merge, array_key_exists, count;
 
 /**
  * @property-read Attribute $id
  * @property-read Attribute $class
  * @property-read Attribute $style
  */
-final class Attributes implements Countable, Stringable
+class Attributes implements Countable, Stringable
 {
     use PropertyAccessor;
 
@@ -39,7 +38,7 @@ final class Attributes implements Countable, Stringable
             default => $this->attributes[ $name ] ?? null,
         };
 
-        return is_array( $attribute ) ? implode( ' ', $attribute ) : $attribute;
+        return \is_array( $attribute ) ? \implode( ' ', $attribute ) : $attribute;
     }
 
     public function __get( string $property ) : ?Attribute {
@@ -127,27 +126,27 @@ final class Attributes implements Countable, Stringable
 
         // Check against class property only
         if ( $value === null ) {
-            return array_key_exists( $attribute, $this->attributes );
+            return \array_key_exists( $attribute, $this->attributes );
         }
 
         // Check if class exists
         if ( 'class' === $attribute ) {
-            return in_array( $value, $this->attributes[ 'class' ] ?? [], true );
+            return \in_array( $value, $this->attributes[ 'class' ] ?? [], true );
         }
 
         // Check against style attribute
         if ( 'style' === $attribute ) {
 
             // If the value could be a full style declaration, check against that
-            if ( str_contains( $value, ':' ) ) {
-                [ $style, $value ] = explode( ':', $value );
+            if ( \str_contains( $value, ':' ) ) {
+                [ $style, $value ] = \explode( ':', $value );
                 return $this->attributes[ 'style' ][ $style ] === $value;
             }
 
-            return array_key_exists( $value, $this->attributes[ 'style' ] ?? [] );
+            return \array_key_exists( $value, $this->attributes[ 'style' ] ?? [] );
         }
 
-        return in_array( $value, $this->attributes[ $attribute ], true );
+        return \in_array( $value, $this->attributes[ $attribute ], true );
     }
 
     private function getClasses( array $classes ) : array {
@@ -161,14 +160,14 @@ final class Attributes implements Countable, Stringable
         return $styles;
     }
 
-    public function getAttributes( bool $returnValues = false ) : array {
+    final public function getAttributes() : array {
 
         $attributes = [];
 
         foreach ( $this->attributes as $attribute => $value ) {
 
             // Skip empty arrays
-            if ( is_array( $value ) && empty( $value ) ) {
+            if ( \is_array( $value ) && empty( $value ) ) {
                 continue;
             }
 
@@ -188,11 +187,22 @@ final class Attributes implements Countable, Stringable
             $value = match ( gettype( $value ) ) {
                 'string'  => $value,
                 'boolean' => $value ? 'true' : 'false',
-                'array'   => implode( ' ', array_filter( $value ) ),
-                'object'  => method_exists( $value, '__toString' ) ? $value->__toString() : null,
+                'array'   => \implode( ' ', \array_filter( $value ) ),
+                'object'  => \method_exists( $value, '__toString' ) ? $value->__toString() : null,
                 'NULL'    => null,
                 default   => (string) $value,
             };
+
+            $attributes[ $attribute ] = $value;
+        }
+
+        return Attributes::sort( $attributes );
+    }
+
+    public function toArray( bool $useSingleQuote = false ) : array {
+        $quote      = $useSingleQuote ? "'" : '"';
+        $attributes = [];
+        foreach ( $this->getAttributes() as $attribute => $value ) {
 
             // Check if the attribute is considered a boolean
             if ( null === $value || $this->isBooleanAttribute( $attribute ) ) {
@@ -201,34 +211,29 @@ final class Attributes implements Countable, Stringable
 
             // Discard empty values, assign the attribute="value" as string
             else {
-                $attributes[ $attribute ] = $returnValues ? $value : "$attribute=\"$value\"";
+                $attributes[ $attribute ] = $attribute . '=' . $quote . $value . $quote;
             }
         }
-
-        return Attributes::sort( $attributes );
+        return $attributes;
     }
 
-    public function toArray() : array {
-        return $this->getAttributes();
+    public function toString( bool $useSingleQuote = false ) : string {
+        return \implode( ' ', $this->toArray( $useSingleQuote ) );
     }
 
-    public function count() : int {
-        return count( $this->attributes );
+    final public function count() : int {
+        return \count( $this->attributes );
     }
 
     public function __toString() : string {
-        return implode( ' ', $this->getAttributes() );
+        return $this->toString();
     }
 
     private function isBooleanAttribute( string $attribute ) : bool {
-        return in_array( $attribute, [ 'disabled', 'readonly', 'required', 'checked', 'hidden', 'autofocus', ], true );
+        return \in_array( $attribute, [ 'disabled', 'readonly', 'required', 'checked', 'hidden', 'autofocus', ], true );
     }
 
-    public static function sort(
-        array  $attributes,
-        ?array $order = null,
-        ?array $sortByList = null,
-    ) : array {
+    public static function sort( array $attributes, ?array $order = null, ?array $sortByList = null ) : array {
 
         $sortByList ??= [
             'id',
@@ -241,10 +246,11 @@ final class Attributes implements Countable, Stringable
             'class',
             'style',
         ];
-        $sort       = [];
+
+        $sort = [];
 
         foreach ( $order ?? $sortByList as $value ) {
-            if ( array_key_exists( $value, $attributes ) ) {
+            if ( \array_key_exists( $value, $attributes ) ) {
                 $sort[ $value ] = $attributes[ $value ];
             }
         }

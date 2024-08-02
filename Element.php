@@ -110,7 +110,7 @@ class Element implements Printable
     }
 
     final public function tag( string $set ) : Element {
-        $this->tag->set( $set);
+        $this->tag->set( $set );
         return $this;
     }
 
@@ -204,7 +204,13 @@ class Element implements Printable
         return $this;
     }
 
-    public static function id( string $string, string $separator = '-' ) : string {
+    /**
+     * @param string[]  $string
+     * @param string    $separator
+     *
+     * @return string
+     */
+    public static function id( string | array $string, string $separator = '-' ) : string {
         // TODO : Check if $id is already in use, do this in a Core class
         // TODO : Get ASCII lang from Core\Settings
         return normalizeKey( $string, $separator );
