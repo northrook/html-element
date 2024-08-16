@@ -5,8 +5,8 @@ declare( strict_types = 1 );
 namespace Northrook\HTML;
 
 use LogicException;
-use Northrook\Core\Interface\Printable;
-use Northrook\Core\Trait\PropertyAccessor;
+use Northrook\Interface\Printable;
+use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element\{Attribute, Attributes, Content, Tag};
 use Northrook\Logger\Log;
 use function array_filter, explode, implode, is_callable, is_int, is_string, str_contains, trim, Northrook\normalizeKey;

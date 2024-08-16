@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\HTML\Element;
 
-use Northrook\Core\Trait\PropertyAccessor;
+use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element;
 use Stringable, LogicException;
 

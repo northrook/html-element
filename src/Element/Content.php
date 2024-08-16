@@ -4,8 +4,8 @@ declare( strict_types = 1 );
 
 namespace Northrook\HTML\Element;
 
-use Northrook\Core\Interface\Printable;
-use Northrook\Core\Trait\PrintableClass;
+use Northrook\Interface\Printable;
+use Northrook\Trait\PrintableClass;
 use Northrook\HTML\Element;
 use Stringable;
 use function array_filter, implode, is_array;
