@@ -240,6 +240,7 @@ class Attributes implements Countable, Stringable
     public static function sort( array $attributes, ?array $order = null, ?array $sortByList = null ) : array {
 
         $sortByList ??= [
+            'lang',
             'id',
             'href',
             'src',
