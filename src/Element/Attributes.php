@@ -31,6 +31,10 @@ class Attributes implements Countable, Stringable
         }
     }
 
+    public static function from( array $attributes ) : Attributes {
+        return new Attributes( $attributes );
+    }
+
     public function get( string $name ) : ?string {
         $attribute = match ( $name ) {
             'class' => $this->getClasses( $this->attributes[ 'class' ] ?? [] ),
