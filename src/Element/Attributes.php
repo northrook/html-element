@@ -35,6 +35,13 @@ class Attributes implements Countable, Stringable
         return new Attributes( $attributes );
     }
 
+    public function __get( string $property ) : ?Attribute {
+        return match ( $property ) {
+            'id', 'class', 'style' => $this->edit( $property ),
+            default                => throw new LogicException( 'Invalid property: ' . $property ),
+        };
+    }
+
     public function get( string $name ) : ?string {
         $attribute = match ( $name ) {
             'class' => $this->getClasses( $this->attributes[ 'class' ] ?? [] ),
@@ -45,14 +52,15 @@ class Attributes implements Countable, Stringable
         return \is_array( $attribute ) ? \implode( ' ', $attribute ) : $attribute;
     }
 
-    public function __get( string $property ) : ?Attribute {
-        return match ( $property ) {
-            'id', 'class', 'style' => $this->edit( $property ),
-            default                => throw new LogicException( 'Invalid property: ' . $property ),
-        };
-    }
 
-    public function edit( string $attribute ) : Attribute {
+    /**
+     * @param string  $attribute
+     *
+     * @return Attribute
+     * @internal
+     *
+     */
+    final public function edit( string $attribute ) : Attribute {
         return new Attribute( $attribute, $this, $this->parent );
     }
 
@@ -88,6 +96,11 @@ class Attributes implements Countable, Stringable
             true  => [ $value, ...$this->attributes[ $name ] ?? [] ],
             false => [ ...$this->attributes[ $name ] ?? [], $value ],
         };
+    }
+
+    final public function merge( array $attributes ) : Attributes {
+        $this->attributes = \array_merge( $this->attributes, $attributes );
+        return $this;
     }
 
     /**
@@ -164,11 +177,14 @@ class Attributes implements Countable, Stringable
         return $styles;
     }
 
-    final public function getAttributes() : array {
+    final public function getAttributes( array $merge = [] ) : array {
 
         $attributes = [];
 
-        foreach ( $this->attributes as $attribute => $value ) {
+        foreach (
+            $this->merge( $merge )->attributes
+            as $attribute => $value
+        ) {
 
             // Skip empty arrays
             if ( \is_array( $value ) && empty( $value ) ) {
