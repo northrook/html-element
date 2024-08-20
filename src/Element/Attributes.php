@@ -133,18 +133,14 @@ class Attributes implements Countable, Stringable
 
     final public function classes( string | array $class, ?string $value = null ) : Attributes {
 
-        $classes = \is_string( $class ) ? [ $class => $value ] : $class;
-
-        $this->attributes[ 'class' ] = Element::classes( $class );
+        $this->add( 'class', \is_string( $class ) ? [ $class => $value ] : $class );
 
         return $this;
     }
 
     final public function styles( string | array $style, ?string $value = null ) : Attributes {
 
-        $styles = \is_string( $style ) ? [ $style => $value ] : $style;
-
-        $this->attributes[ 'style' ] = Element::styles( $style );
+        $this->add( 'style', \is_string( $style ) ? [ $style => $value ] : $style);
 
         return $this;
     }
