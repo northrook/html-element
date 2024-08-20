@@ -26,7 +26,6 @@ class Attributes implements Countable, Stringable
         array                     $attributes = [],
         private readonly ?Element $parent = null,
     ) {
-        dump( $attributes );
         foreach ( $attributes as $name => $value ) {
             $this->add( $name, $value );
         }
@@ -277,6 +276,6 @@ class Attributes implements Countable, Stringable
             }
         }
 
-        return array_merge( $sort, $attributes );
+        return \array_merge( $sort, $attributes );
     }
 }
