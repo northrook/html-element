@@ -31,6 +31,10 @@ class Attributes implements Countable, Stringable
         }
     }
 
+    public function view() : array {
+        return $this->attributes;
+    }
+
     public static function from( array $attributes ) : Attributes {
         return new Attributes( $attributes );
     }
@@ -84,7 +88,7 @@ class Attributes implements Countable, Stringable
 
         $this->attributes[ $name ] = match ( $name ) {
             'id'    => Element::id( $value ),
-            'class' => Element::classes( ... $this->getAttribute( 'class', $value, $prepend ) ),
+            'class' => Element::classes( ... $this->getAttribute( 'class', Element::classes( $value ), $prepend ) ),
             'style' => Element::styles( ... $this->getAttribute( 'style', $value, $prepend ) ),
             default => $value,
         };
@@ -116,12 +120,31 @@ class Attributes implements Countable, Stringable
      */
     public function set( string $name, mixed $value ) : self {
 
+
         $this->attributes[ $name ] = match ( $name ) {
             'id'    => Element::id( $value ),
             'class' => Element::classes( $value ),
             'style' => Element::styles( $value ),
             default => $value,
         };
+
+        return $this;
+    }
+
+    final public function classes( string | array $class, ?string $value = null ) : Attributes {
+
+        $classes = \is_string( $class ) ? [ $class => $value ] : $class;
+
+        $this->attributes[ 'class' ] = Element::classes( $class );
+
+        return $this;
+    }
+
+    final public function styles( string | array $style, ?string $value = null ) : Attributes {
+
+        $styles = \is_string( $style ) ? [ $style => $value ] : $style;
+
+        $this->attributes[ 'style' ] = Element::styles( $style );
 
         return $this;
     }
@@ -167,7 +190,7 @@ class Attributes implements Countable, Stringable
     }
 
     private function getClasses( string | array $classes ) : array {
-        return array_flip( array_flip( (array)$classes ) );
+        return array_flip( array_flip( (array) $classes ) );
     }
 
     private function getStyles( array $styles ) : array {

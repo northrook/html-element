@@ -51,7 +51,7 @@ final readonly class Attribute implements Stringable
      *
      * @return Attributes|Element
      */
-    public function add( string | array $value, bool $prepend = false ) : Attributes | Element {
+    public function add( null |string | array $value, bool $prepend = false ) : Attributes | Element {
         $this->attributes->add( $this->attribute, $value, $prepend );
         return $this->element ?: $this->attributes;
     }

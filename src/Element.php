@@ -216,55 +216,54 @@ class Element implements Printable
         return normalizeKey( $string, $separator );
     }
 
-    public static function classes( null | string | array ...$classes ) : array {
-
-        $return = [];
-
-        foreach ( $classes as $class ) {
-
-            if ( !$class ) {
-                continue;
-            }
-
-            $class = array_filter( is_string( $class ) ? explode( ' ', $class ) : $class );
-
-            $return = [ ...$return, ...$class ];
+    public static function classes( null | string | array ...$attribute ) : array {
+        $classes = [];
+        foreach ( static::explodeAttribute( $attribute, ' ' ) as $class ) {
+            $classes[] = \trim( $class, " \t\n\r\0\x0B," );
         }
-
-        return $return;
+        return $classes;
     }
 
-    public static function styles( null | string | array ...$styles ) : array {
+    public static function styles( null | string | array ...$attribute ) : array {
 
-        $return = [];
+        $styles = [];
+        foreach ( static::explodeAttribute( $attribute, ';' ) as $property => $value ) {
 
-        foreach ( $styles as $style ) {
-            if ( !$style ) {
-                continue;
-            }
-
-            $style = array_filter( is_string( $style ) ? explode( ';', $style ) : $style );
-
-            foreach ( $style as $property => $value ) {
-
-                if ( is_int( $property ) ) {
-                    if ( !str_contains( $value, ':' ) ) {
-                        Log::Error(
-                            'The style {key} was parsed, but {error}. The style was skipped.',
-                            [
-                                'key'   => $value,
-                                'error' => 'has no declaration separator',
-                                'value' => $style,
-                            ],
-                        );
-                        continue;
-                    }
-                    [ $property, $value ] = explode( ':', $value );
+            if ( \is_int( $property ) ) {
+                if ( !str_contains( $value, ':' ) ) {
+                    Log::Error(
+                        'The style {key} was parsed, but {error}. The style was skipped.',
+                        [
+                            'key'   => $property,
+                            'error' => 'has no declaration separator',
+                            'value' => $value,
+                        ],
+                    );
+                    continue;
                 }
-
-                $return[ trim( $property ) ] = trim( $value );
+                [ $property, $value ] = \explode( ':', $value, 2 );
             }
+
+            $styles[ \trim( $property, " \t\n\r\0\x0B," ) ] = \trim( $value, " \t\n\r\0\x0B," );
         }
-        return $return;
+        return $styles;
     }
+
+    private static function explodeAttribute( null | string | array $attribute, string $separator ) : array {
+        if ( !$attribute ) {
+            return [];
+        }
+
+        if ( \is_string( $attribute ) ) {
+            return \explode( $separator, $attribute );
+        }
+
+        $attributes = [];
+
+        foreach ( $attribute as $attr ) {
+            $attributes = [ ...$attributes, ...static::explodeAttribute( $attr, $separator ) ];
+        }
+        return \array_filter( $attributes );
+    }
+
 }
