@@ -38,8 +38,8 @@ final class Tag implements Stringable
     public function __get( string $property ) : string | bool | null {
         return match ( $property ) {
             'name'          => $this->name,
-            'closingTag'    => in_array( $this->name, Tag::SELF_CLOSING ) ? null : "</{$this->name}>",
-            'isSelfClosing' => in_array( $this->name, Tag::SELF_CLOSING ),
+            'closingTag'    => \in_array( $this->name, Tag::SELF_CLOSING ) ? null : "</{$this->name}>",
+            'isSelfClosing' => \in_array( $this->name, Tag::SELF_CLOSING ),
             default         => throw new LogicException( 'Invalid property: ' . $property ),
         };
     }
@@ -54,7 +54,7 @@ final class Tag implements Stringable
      * @return Tag
      */
     public function set( string $name ) : Tag {
-        $this->name = strtolower( trim( $name ) );
+        $this->name = \strtolower( \trim( $name ) );
         return $this;
     }
 
@@ -77,6 +77,6 @@ final class Tag implements Stringable
      * @return bool
      */
     public static function isValidTag( ?string $string = null ) : bool {
-        return in_array( strtolower( $string ), [ ... Tag::TAGS, ... Tag::SELF_CLOSING ], true );
+        return \in_array( strtolower( $string ), [ ... Tag::TAGS, ... Tag::SELF_CLOSING ], true );
     }
 }

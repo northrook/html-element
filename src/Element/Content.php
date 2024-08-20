@@ -8,7 +8,6 @@ use Northrook\Interface\Printable;
 use Northrook\Trait\PrintableClass;
 use Northrook\HTML\Element;
 use Stringable;
-use function array_filter, implode, is_array;
 
 /**
  */
@@ -24,21 +23,21 @@ final class Content implements Printable
             return;
         }
 
-        $this->content = array_filter( is_array( $content ) ? $content : [ 'content' => $content ] );
+        $this->content = \array_filter( \is_array( $content ) ? $content : [ 'content' => $content ] );
     }
 
     public function add( int | string $key, string | Element $content ) : void {
 
-        if ( is_int( $key ) ) {
+        if ( \is_int( $key ) ) {
 
-            if ( array_key_exists( $key, $this->content ) ) {
+            if ( \array_key_exists( $key, $this->content ) ) {
 
                 $insertPosition = $key;
                 $newElement     = $content;
-                $this->content  = array_merge(
-                    array_slice( $this->content, 0, $insertPosition ),
+                $this->content  = \array_merge(
+                    \array_slice( $this->content, 0, $insertPosition ),
                     [ $newElement ],
-                    array_slice( $this->content, $insertPosition ),
+                    \array_slice( $this->content, $insertPosition ),
                 );
                 return;
             }
@@ -51,11 +50,11 @@ final class Content implements Printable
     }
 
     public function append( string | Element $content ) : void {
-        $this->content = array_merge( $this->content, [ $content ] );
+        $this->content = \array_merge( $this->content, [ $content ] );
     }
 
     public function prepend( string | Element $content ) : void {
-        $this->content = array_merge( [ $content ], $this->content );
+        $this->content = \array_merge( [ $content ], $this->content );
     }
 
     public function __toString() : string {
@@ -67,10 +66,10 @@ final class Content implements Printable
         $array = [];
 
         foreach ( $content as $item ) {
-            $item    = is_array( $item ) ? implode( ' ', $item ) : $item;
+            $item    = \is_array( $item ) ? \implode( ' ', $item ) : $item;
             $array[] = $item;
         }
 
-        return implode( '', array_filter( $array ) );
+        return \implode( '', \array_filter( $array ) );
     }
 }
