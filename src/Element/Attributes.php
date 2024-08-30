@@ -1,226 +1,228 @@
 <?php
 
-declare( strict_types = 1 );
-
 namespace Northrook\HTML\Element;
 
-use Countable, Stringable, LogicException;
-use Northrook\Trait\PropertyAccessor;
-use Northrook\HTML\Element;
+use Countable, Stringable;
+use Northrook\HTML\AbstractElement;
+use Northrook\Logger\Log;
+use function Northrook\toString;
 
-/**
- * @property-read Attribute $id
- * @property-read Attribute $class
- * @property-read Attribute $style
- */
-class Attributes implements Countable, Stringable
+
+final class Attributes implements Countable, Stringable
 {
-    use PropertyAccessor;
 
     /**
      * @var array
      */
     private array $attributes = [];
 
-    public function __construct(
-        array                     $attributes = [],
-        private readonly ?Element $parent = null,
-    ) {
-        foreach ( $attributes as $name => $value ) {
-            $this->add( $name, $value );
-        }
-    }
-
-    public function view() : array {
-        return $this->attributes;
-    }
-
-    public static function from( array $attributes ) : Attributes {
-        return new Attributes( $attributes );
-    }
-
-    public function __get( string $property ) : ?Attribute {
-        return match ( $property ) {
-            'id', 'class', 'style' => $this->edit( $property ),
-            default                => throw new LogicException( 'Invalid property: ' . $property ),
-        };
-    }
-
-    public function get( string $name ) : ?string {
-        $attribute = match ( $name ) {
-            'class' => $this->getClasses( $this->attributes[ 'class' ] ?? [] ),
-            'style' => $this->getStyles( $this->attributes[ 'style' ] ?? [] ),
-            default => $this->attributes[ $name ] ?? null,
-        };
-
-        return \is_array( $attribute ) ? \implode( ' ', $attribute ) : $attribute;
-    }
-
-
     /**
-     * @param string  $attribute
-     *
-     * @return Attribute
-     * @internal
-     *
+     * @param array  $attributes  [optional] assigns provided attributes to this object.
      */
-    final public function edit( string $attribute ) : Attribute {
-        return new Attribute( $attribute, $this, $this->parent );
+    public function __construct(
+        array                             $attributes = [],
+        private readonly ?AbstractElement $parent = null,
+    )
+    {
+        $this->assign( $attributes );
     }
 
     /**
-     * Add attributes to this element.
-     *
-     * - Will not overwrite existing.
-     * - Use `set` to overwrite existing attributes.
-     *
-     * @param string  $name
-     * @param mixed   $value
-     * @param bool    $prepend
+     * @param array  $attributes
      *
      * @return $this
      */
-    public function add( string $name, mixed $value, bool $prepend = false ) : self {
-
-        if ( isset( $this->attributes[ $name ] ) && !( $name === 'class' || $name === 'style' ) ) {
+    public function assign( array $attributes ) : self
+    {
+        if ( !empty( $this->attributes ) ) {
             return $this;
         }
-
-        $this->attributes[ $name ] = match ( $name ) {
-            'id'    => Element::id( $value ),
-            'class' => Element::classes( ... $this->getAttribute( 'class', Element::classes( $value ), $prepend ) ),
-            'style' => Element::styles( ... $this->getAttribute( 'style', $value, $prepend ) ),
-            default => $value,
-        };
+        foreach ( $attributes as $name => $value ) {
+            $this->set( $name, $value );
+        }
         return $this;
     }
 
-    private function getAttribute( string $name, mixed $value, bool $prepend ) : array {
-        return match ( $prepend ) {
-            true  => [ $value, ...$this->attributes[ $name ] ?? [] ],
-            false => [ ...$this->attributes[ $name ] ?? [], $value ],
-        };
-    }
-
-    final public function merge( array $attributes ) : Attributes {
-        $this->attributes = \array_merge( $this->attributes, $attributes );
-        return $this;
-    }
-
-    /**
-     * Sets a given attribute.
-     *
-     *  - Will not overwrite existing attributes by default.
-     * - Set $overwrite` to true to overwrite existing attributes.
-     *
-     * @param string  $name
-     * @param mixed   $value
-     *
-     * @return $this
-     */
-    public function set( string $name, mixed $value ) : self {
-
-
-        $this->attributes[ $name ] = match ( $name ) {
-            'id'    => Element::id( $value ),
-            'class' => Element::classes( $value ),
-            'style' => Element::styles( $value ),
-            default => $value,
-        };
-
-        return $this;
-    }
-
-    final public function classes( string | array $class, ?string $value = null ) : Attributes {
-
-        $this->add( 'class', \is_string( $class ) ? [ $class => $value ] : $class );
-
-        return $this;
-    }
-
-    final public function styles( string | array $style, ?string $value = null ) : Attributes {
-
-        $this->add( 'style', \is_string( $style ) ? [ $style => $value ] : $style);
-
-        return $this;
-    }
-
-    /**
-     * Check if a given attribute exists, and optionally check its value.
-     *
-     * @param string   $attribute
-     * @param ?string  $value  [optional]
-     *
-     * @return bool
-     */
-    public function has( string $attribute, ?string $value = null ) : bool {
-
-        // Bail early if the attribute does not exist
-        if ( !isset( $this->attributes[ $attribute ] ) ) {
-            return false;
+    public function add(
+        string | array        $attribute = null,
+        string | array | null $value = null,
+        bool                  $prepend = false,
+    ) : self
+    {
+        if ( \is_string( $attribute ) ) {
+            $attribute = [ $attribute => $value ];
         }
 
-        // Check against class property only
-        if ( $value === null ) {
-            return \array_key_exists( $attribute, $this->attributes );
-        }
+        foreach ( $attribute as $name => $value ) {
+            $current = $this->attributes[ $name ] ?? false;
 
-        // Check if class exists
-        if ( 'class' === $attribute ) {
-            return \in_array( $value, $this->attributes[ 'class' ] ?? [], true );
-        }
-
-        // Check against style attribute
-        if ( 'style' === $attribute ) {
-
-            // If the value could be a full style declaration, check against that
-            if ( \str_contains( $value, ':' ) ) {
-                [ $style, $value ] = \explode( ':', $value );
-                return $this->attributes[ 'style' ][ $style ] === $value;
-            }
-
-            return \array_key_exists( $value, $this->attributes[ 'style' ] ?? [] );
-        }
-
-        return \in_array( $value, $this->attributes[ $attribute ], true );
-    }
-
-    private function getClasses( string | array $classes ) : array {
-        return array_flip( array_flip( (array) $classes ) );
-    }
-
-    private function getStyles( array $styles ) : array {
-        foreach ( $styles as $style => $val ) {
-            $styles[ $style ] = "$style: $val;";
-        }
-        return $styles;
-    }
-
-    final public function getAttributes( array $merge = [] ) : array {
-
-        $attributes = [];
-
-        foreach (
-            $this->merge( $merge )->attributes
-            as $attribute => $value
-        ) {
-
-            // Skip empty arrays
-            if ( \is_array( $value ) && empty( $value ) ) {
+            if ( $current === false ) {
+                $this->set( $name, $value );
                 continue;
             }
 
-            // Format style attribute
-            if ( $value && 'style' === $attribute ) {
-                $value = $this->getStyles( $value );
-                // dump( $value );
+            if ( \is_array( $value ) ) {
+                $this->attributes[ $name ] = match ( $name ) {
+                    'class', 'classes' => $prepend
+                        ?
+                        \array_merge( Attribute::classes( $value ), $this->attributes[ $name ] )
+                        : \array_merge( $this->attributes[ $name ], Attribute::classes( $value ) ),
+                    'style', 'styles'  => $prepend
+                        ?
+                        \array_merge( Attribute::styles( $value ), $this->attributes[ $name ] )
+                        : \array_merge( $this->attributes[ $name ], Attribute::styles( $value ) ),
+                    default            => toString( $value, ' ' ),
+                };
+            }
+        }
+        return $this;
+    }
+
+    public function set(
+        string | array        $attribute,
+        string | array | null $value = null,
+    ) : self
+    {
+        if ( \is_string( $attribute ) ) {
+            $attribute = [ $attribute => $value ];
+        }
+
+        foreach ( $attribute as $name => $value ) {
+            $this->attributes[ $name ] = match ( $name ) {
+                'id'               => Attribute::id( $value ),
+                'class', 'classes' => Attribute::classes( $value ),
+                'style', 'styles'  => Attribute::styles( $value ),
+                default            => toString( $value, ' ' ),
+            };
+        }
+
+        return $this;
+    }
+
+    final public function merge( array $attributes ) : self
+    {
+        $this->attributes = [ ... $this->attributes, ... $attributes ];
+        return $this;
+    }
+
+    private function classAttribute() : array
+    {
+        if ( !isset( $this->attributes[ 'class' ] ) ) {
+            return [];
+        }
+        return $this->attributes[ 'class' ];
+    }
+
+    public function get(
+        string $attribute,
+    ) : string | array | null
+    {
+        return match ( $attribute ) {
+            'class', 'classes' => $this->classAttribute(),
+            'style', 'styles'  => ( function() {
+                $styles = [];
+                foreach ( $this->attributes[ 'style' ] ?? [] as $style => $val ) {
+                    $styles[ $style ] = "$style: $val;";
+                }
+                return $styles;
+            } )(),
+        };
+    }
+
+    public function pull( string $attribute ) : string | array | null
+    {
+        $value = $this->get( $attribute ) ?? null;
+        unset( $this->attributes[ $attribute ] );
+        return $value;
+    }
+
+    public function remove( string $attribute ) : self
+    {
+        unset( $this->attributes[ $attribute ] );
+        return $this;
+    }
+
+    public function has(
+        string                $attribute,
+        string | array | null $value = null,
+    ) : bool
+    {
+        if ( $value === null ) {
+            return isset( $this->attributes[ $attribute ] );
+        }
+
+        $attribute = $this->attributes[ $attribute ];
+
+        if ( \is_string( $attribute ) ) {
+            if ( \is_string( $value ) ) {
+                return $attribute === $value;
+            }
+            else {
+                Log::error(
+                    'Unable to property compare the attribute {attribute} of {attributeType} to value of {valueType}. The types do not match.',
+                    [
+                        'attribute'     => $attribute,
+                        'attributeType' => \gettype( $attribute ),
+                        'valueType'     => \gettype( $value ),
+                    ],
+                );
+                return false;
+            }
+        }
+
+        if ( \is_array( $attribute ) ) {
+            $has = [];
+
+            foreach ( $attribute as $currentValue ) {
+                if ( \in_array( $currentValue, $value, true ) ) {
+                    $has[] = $currentValue;
+                }
             }
 
+            // dump( \array_intersect( $attribute, $value ) );
 
-            // Deduplicate class attribute
-            if ( $value && 'class' === $attribute ) {
-                $value = $this->getClasses( $value );
+            if ( \count( $has ) === \count( $attribute ) ) {
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    public function clear( bool $areYouSure = false ) : bool
+    {
+        if ( $areYouSure ) {
+            $this->attributes = [];
+            return true;
+        }
+        return false;
+    }
+
+    final public function getAttributes( array $merge = [] ) : array
+    {
+        $attributes = [];
+
+        foreach ( $this->merge( $merge )->attributes as $attribute => $value ) {
+            // dd( $this->attributes );
+            // Skip empty arrays
+            if ( \is_array( $value ) && empty( $value ) ) {
+                Log::error(
+                    'The attribute {attribute} provided an empty array value.',
+                    [ 'attribute' => $attribute, 'attributes' => $this->attributes ],
+                );
+                continue;
+            }
+
+            // Attribute value formatting
+            $value = match ( $attribute ) {
+                'class' => $this->get( 'class' ),
+                'style' => $this->get( 'style' ),
+                default => $value,
+            };
+
+            // if ( \is_array( $value ) ) {
+            //     dump( $attribute, $value );
+            // }
 
             // Convert types to string
             $value = match ( gettype( $value ) ) {
@@ -235,14 +237,20 @@ class Attributes implements Countable, Stringable
             $attributes[ $attribute ] = $value;
         }
 
-        return Attributes::sort( $attributes );
+        return $this::sort( $attributes );
     }
 
-    public function toArray( bool $useSingleQuote = false ) : array {
-        $quote      = $useSingleQuote ? "'" : '"';
+    public function getAttributeArray() : array
+    {
+        return $this->attributes;
+    }
+
+    public function toArray( bool $useSingleQuote = false ) : array
+    {
+        $quote = $useSingleQuote ? "'" : '"';
+
         $attributes = [];
         foreach ( $this->getAttributes() as $attribute => $value ) {
-
             // Check if the attribute is considered a boolean
             if ( null === $value || $this->isBooleanAttribute( $attribute ) ) {
                 $attributes[ $attribute ] = $attribute;
@@ -256,24 +264,30 @@ class Attributes implements Countable, Stringable
         return $attributes;
     }
 
-    public function toString( bool $useSingleQuote = false ) : string {
-        return \implode( ' ', $this->toArray( $useSingleQuote ) );
-    }
-
-    final public function count() : int {
-        return \count( $this->attributes );
-    }
-
-    public function __toString() : string {
-        return $this->toString();
-    }
-
-    private function isBooleanAttribute( string $attribute ) : bool {
+    private function isBooleanAttribute( string $attribute ) : bool
+    {
         return \in_array( $attribute, [ 'disabled', 'readonly', 'required', 'checked', 'hidden', 'autofocus', ], true );
     }
 
-    public static function sort( array $attributes, ?array $order = null, ?array $sortByList = null ) : array {
+    /**
+     * @param string  $attribute
+     *
+     * @return Attribute
+     * @internal
+     *
+     */
+    final public function edit( string $attribute ) : Attribute
+    {
+        return new Attribute( $attribute, $this, $this->parent );
+    }
 
+    public static function from( array $attributes ) : Attributes
+    {
+        return new Attributes( $attributes );
+    }
+
+    public static function sort( array $attributes, ?array $order = null, ?array $sortByList = null ) : array
+    {
         $sortByList ??= [
             'lang',
             'id',
@@ -296,5 +310,20 @@ class Attributes implements Countable, Stringable
         }
 
         return \array_merge( $sort, $attributes );
+    }
+
+    public function __toString() : string
+    {
+        return $this->toString();
+    }
+
+    public function toString( bool $useSingleQuote = false ) : string
+    {
+        return \implode( ' ', $this->toArray( $useSingleQuote ) );
+    }
+
+    final public function count() : int
+    {
+        return \count( $this->attributes );
     }
 }
