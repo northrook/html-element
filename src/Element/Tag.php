@@ -65,7 +65,7 @@ final class Tag implements Stringable
         'h6',
     ];
 
-    private const SELF_CLOSING = [
+    public const SELF_CLOSING = [
         'area',
         'base',
         'br',
