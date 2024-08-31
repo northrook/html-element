@@ -78,8 +78,12 @@ class AbstractElement implements Printable
         return $this;
     }
 
-    public function content( string | array | Element $content, bool $prepend = false ) : static
+    public function content( string | array | Element | null $content, bool $prepend = false ) : static
     {
+        if ( $content === null) {
+            return $this;
+        }
+
         if ( !\is_array( $content ) ) {
             $content = [ $content ];
         }
