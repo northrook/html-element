@@ -6,9 +6,11 @@ namespace Northrook\HTML\Element;
 
 use Northrook\HTML\AbstractElement;
 use Northrook\Logger\Log;
+use Northrook\Settings;
 use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element;
 use Stringable, LogicException;
+use voku\helper\ASCII;
 use function Northrook\normalizeKey;
 
 
@@ -108,6 +110,11 @@ final readonly class Attribute implements Stringable
     {
         // TODO : Check if $id is already in use, do this in a Core class
         // TODO : Get ASCII lang from Core\Settings
+
+        if ( \class_exists( ASCII::class ) ) {
+            return ASCII::to_slugify( $string, $separator, Settings::get( 'language.locale' ) );
+        }
+
         return normalizeKey( $string, $separator );
     }
 
@@ -128,7 +135,7 @@ final readonly class Attribute implements Stringable
 
         foreach ( $attribute as $property => $value ) {
             if ( \is_int( $property ) ) {
-            dump( $property, $value );
+                dump( $property, $value );
                 if ( !\str_contains( $value, ':' ) ) {
                     Log::Error(
                         'The style {key} was parsed, but {error}. The style was skipped.',

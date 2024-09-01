@@ -80,7 +80,7 @@ class AbstractElement implements Printable
 
     public function content( string | array | Element | null $content, bool $prepend = false ) : static
     {
-        if ( $content === null) {
+        if ( $content === null ) {
             return $this;
         }
 
@@ -96,6 +96,16 @@ class AbstractElement implements Printable
         }
 
         return $this;
+    }
+
+    protected function buildContent( string $contentSeparator = EMPTY_STRING ) : string
+    {
+        $content = [];
+        foreach ( $this->content as $html ) {
+            $content[] = \trim( $html );
+        }
+
+        return \implode( $contentSeparator, $content );
     }
 
     final protected function buildElement( string $contentSeparator = EMPTY_STRING ) : static
