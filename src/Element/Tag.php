@@ -65,6 +65,8 @@ final class Tag implements Stringable
         'h6',
     ];
 
+    public const HEADING = [ 'hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
+
     public const SELF_CLOSING = [
         'area',
         'base',

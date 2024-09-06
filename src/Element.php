@@ -13,6 +13,9 @@ use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttr
  * @property-read Attribute $class
  * @property-read Attribute $style
  *
+ * @method static string classes( null | string | array ...$classes )
+ * @method static string styles( string | array $stules )
+ *
  */
 class Element extends AbstractElement
 {
@@ -57,6 +60,15 @@ class Element extends AbstractElement
             'tag'            => $this->tag,
             'class', 'style' => $this->attributes->edit( $property ),
             default          => null
+        };
+    }
+
+    public static function __callStatic( string $name, array $arguments )
+    {
+        return match ( $name ) {
+            'classes' => \implode( ' ', Attribute::classes( ...$arguments ) ),
+            'styles'  => \implode( '; ', Attribute::styles( $arguments[ 0 ] ) ),
+            default   => null
         };
     }
 }
