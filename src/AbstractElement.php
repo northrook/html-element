@@ -130,7 +130,7 @@ class AbstractElement implements Printable
         return $this;
     }
 
-    final public function __toString() : string
+    public function __toString() : string
     {
         return $this->buildElement()->html;
     }
