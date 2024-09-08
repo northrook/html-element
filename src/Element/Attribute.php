@@ -135,7 +135,6 @@ final readonly class Attribute implements Stringable
 
         foreach ( $attribute as $property => $value ) {
             if ( \is_int( $property ) ) {
-                dump( $property, $value );
                 if ( !\str_contains( $value, ':' ) ) {
                     Log::Error(
                         'The style {key} was parsed, but {error}. The style was skipped.',
