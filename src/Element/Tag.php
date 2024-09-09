@@ -67,6 +67,8 @@ final class Tag implements Stringable
 
     public const HEADING = [ 'hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
 
+    public const INLINE = [ 'a', 'b', 'string', 'cite', 'code', 'em', 'i', 'kbd', 'mark', 'span', 's', 'small', 'wbr' ];
+
     public const SELF_CLOSING = [
         'area',
         'base',
