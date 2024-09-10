@@ -62,6 +62,11 @@ final class Attributes implements Countable, Stringable
             }
 
             if ( \is_array( $value ) ) {
+                if ( \array_key_exists( 'prepend', $value ) && $value[ 'prepend' ] === true ) {
+                    $prepend = true;
+                    unset( $value[ 'prepend' ] );
+                };
+
                 $this->attributes[ $name ] = match ( $name ) {
                     'class', 'classes' => $prepend
                         ?
@@ -119,7 +124,8 @@ final class Attributes implements Countable, Stringable
     {
         return match ( $attribute ) {
             'class', 'classes' => $this->classAttribute(),
-            'style', 'styles'  => ( function() {
+            'style', 'styles'  => ( function()
+            {
                 $styles = [];
                 foreach ( $this->attributes[ 'style' ] ?? [] as $style => $val ) {
                     $styles[ $style ] = "$style: $val;";
