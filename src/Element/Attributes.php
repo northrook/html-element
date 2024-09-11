@@ -35,6 +35,9 @@ final class Attributes implements Countable, Stringable
     public function assign( array $attributes ) : self
     {
         if ( !empty( $this->attributes ) ) {
+            foreach ( $attributes as $name => $value ) {
+                $this->add( $name, $value );
+            }
             return $this;
         }
         foreach ( $attributes as $name => $value ) {

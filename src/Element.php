@@ -6,6 +6,7 @@ namespace Northrook\HTML;
 
 use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttributes, Tag};
+use function Northrook\arrayFilter;
 
 
 /**
@@ -13,9 +14,10 @@ use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttr
  * @property-read Attribute $class
  * @property-read Attribute $style
  *
- * @method static string classes( null | string | array ...$classes )
- * @method static string styles( string | array $stules )
+ * @method static string classes( string | array ...$classes )
+ * @method static string styles( string | array ...$styles )
  *
+ * @method static string meta( ?string $name = null, ?string $property = null, mixed $content )
  */
 class Element extends AbstractElement
 {
@@ -67,8 +69,52 @@ class Element extends AbstractElement
     {
         return match ( $name ) {
             'classes' => \implode( ' ', Attribute::classes( ...$arguments ) ),
-            'styles'  => \implode( '; ', Attribute::styles( $arguments[ 0 ] ) ),
+            'styles'  => \implode( '; ', Attribute::styles( ...$arguments ) ),
+            'meta'    => (string) new Element( 'meta', arrayFilter( $arguments ) ),
             default   => null
         };
+    }
+
+    public static function a(
+        mixed                 $content,
+        string                $href,
+        null | string         $id = null,
+        null | string | array $class = null,
+        null | string | array $style = null,
+        null | string         $target = null,
+        null | string         $property = null,
+        ?string               ...$attribute
+    ) : Element
+    {
+        return new Element(
+            'a', static::resolveVariables( \get_defined_vars() ), $content,
+        );
+    }
+
+    public static function li(
+        mixed                 $content,
+        null | string         $id = null,
+        null | string | array $class = null,
+        null | string | array $style = null,
+        null | string         $property = null,
+        null | string         $tyoeof = null,
+        ?string               ...$attribute
+    ) : Element
+    {
+        return new Element(
+            'li', static::resolveVariables( \get_defined_vars() ), $content,
+        );
+    }
+
+    final protected static function resolveVariables( array $variables ) : array
+    {
+        \array_shift( $variables );
+        $attributes = \array_pop( $variables );
+        return arrayFilter(
+            [
+                ...$variables,
+                ...$attributes,
+            ],
+        );
     }
 }

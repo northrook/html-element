@@ -58,43 +58,14 @@ class AbstractElement implements Printable
 
         return $this;
     }
-
-    public function attribute(
-        string | array | null $add = null,
-        mixed                 $value = null,
-    ) : static
-    {
-        $this->attributes ??= new Attributes();
-
-        if ( \is_array( $add ) ) {
-            foreach ( $add as $name => $value ) {
-                $this->attributes->add( $name, $value );
-            }
-            return $this;
-        }
-
-        if ( \is_string( $add ) ) {
-            $this->attributes->add( $add, $value );
-        }
-
-        return $this;
-    }
-
     public function attributes(
-        string | array | null $set = null,
-        mixed                 $value = null,
+        string | array | null $add = null,
+        string | array | null $value = null,
     ) : static
     {
         $this->attributes ??= new Attributes();
 
-        if ( \is_array( $set ) ) {
-            $this->attributes->assign( $set );
-            return $this;
-        }
-
-        if ( \is_string( $set ) ) {
-            $this->attributes->set( $set, $value );
-        }
+        $this->attributes->add( $add, $value );
 
         return $this;
     }

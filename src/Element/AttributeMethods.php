@@ -25,7 +25,10 @@ trait AttributeMethods
      */
     final public function class( string | bool ...$add ) : static
     {
-        $this->attributes->add( 'class', $add );
+        $prepend = \array_key_exists( 'prepend', $add );
+        unset( $add[ 'prepend' ] );
+
+        $this->attributes->add( 'class', $add, $prepend );
         return $this;
     }
 
@@ -40,7 +43,10 @@ trait AttributeMethods
      */
     final public function style( string | bool ...$add ) : static
     {
-        $this->attributes->add( 'style', $add );
+        $prepend = \array_key_exists( 'prepend', $add );
+        unset( $add[ 'prepend' ] );
+
+        $this->attributes->add( 'style', $add, $prepend );
         return $this;
     }
 }
