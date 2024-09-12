@@ -109,7 +109,7 @@ final class Attributes implements Countable, Stringable
 
     final public function merge( array $attributes ) : self
     {
-        $this->attributes = [ ... $this->attributes, ... $attributes ];
+        $this->attributes = \array_merge_recursive( $this->attributes, $attributes );
         return $this;
     }
 
