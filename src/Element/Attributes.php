@@ -109,13 +109,19 @@ final class Attributes implements Countable, Stringable
 
     final public function merge( array $attributes ) : self
     {
-        $this->attributes = \array_merge_recursive( $this->attributes, $attributes );
+        foreach ( $attributes as $attribute => $value ) {
+            $this->add( $attribute, $value );
+        }
         return $this;
     }
 
     private function classAttribute() : array
     {
         if ( !isset( $this->attributes[ 'class' ] ) ) {
+            return [];
+        }
+        if ( !\is_array( $this->attributes[ 'class' ] ) ) {
+            dump( $this );
             return [];
         }
         return $this->attributes[ 'class' ];

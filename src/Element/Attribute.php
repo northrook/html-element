@@ -161,7 +161,7 @@ final readonly class Attribute implements Stringable
         }
 
         if ( \is_string( $attribute ) ) {
-            $attributes = \explode( $separator, $attribute );
+            $attributes = \str_contains( $attribute, $separator ) ? \explode( $separator, $attribute ) : [ $attribute ];
         }
         else {
             $attributes = [];
