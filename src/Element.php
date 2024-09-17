@@ -91,18 +91,31 @@ class Element extends AbstractElement
         );
     }
 
-    public static function li(
-        mixed                 $content,
-        null | string         $id = null,
-        null | string | array $class = null,
-        null | string | array $style = null,
-        null | string         $property = null,
-        null | string         $tyoeof = null,
-        ?string               ...$attribute
+    public static function button(
+        mixed $content,
+        array $attributes = [],
     ) : Element
     {
         return new Element(
-            'li', static::resolveVariables( \get_defined_vars() ), $content,
+            'button', $attributes, $content,
+        );
+    }
+
+    public static function ol(
+        mixed $content,
+        array $attributes = [],
+    ) : Element
+    {
+        return new Element( 'ol', $attributes, $content );
+    }
+
+    public static function li(
+        mixed $content,
+        array $attributes = [],
+    ) : Element
+    {
+        return new Element(
+            'li', $attributes, $content,
         );
     }
 
