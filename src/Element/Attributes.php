@@ -68,6 +68,7 @@ final class Attributes implements Countable, Stringable
                     $prepend = true;
                     unset( $value[ 'prepend' ] );
                 };
+            }
 
                 $this->attributes[ $name ] = match ( $name ) {
                     'class', 'classes' => $prepend
@@ -80,7 +81,6 @@ final class Attributes implements Countable, Stringable
                             : \array_merge( $this->attributes[ $name ], Attribute::styles( $value ) ),
                     default            => $value,
                 };
-            }
         }
         return $this;
     }
