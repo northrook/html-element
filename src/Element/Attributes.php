@@ -7,7 +7,6 @@ use Northrook\HTML\AbstractElement;
 use Northrook\Logger\Log;
 use function Northrook\toString;
 
-
 final class Attributes implements Countable, Stringable
 {
 
@@ -20,8 +19,8 @@ final class Attributes implements Countable, Stringable
      * @param array  $attributes  [optional] assigns provided attributes to this object.
      */
     public function __construct(
-        array                             $attributes = [],
-        private readonly ?AbstractElement $parent = null,
+            array                             $attributes = [],
+            private readonly ?AbstractElement $parent = null,
     )
     {
         $this->assign( $attributes );
@@ -47,9 +46,9 @@ final class Attributes implements Countable, Stringable
     }
 
     public function add(
-        string | array        $attribute = null,
-        string | array | null $value = null,
-        bool                  $prepend = false,
+            string | array        $attribute = null,
+            string | array | null $value = null,
+            bool                  $prepend = false,
     ) : self
     {
         if ( \is_string( $attribute ) ) {
@@ -69,26 +68,26 @@ final class Attributes implements Countable, Stringable
                     $prepend = true;
                     unset( $value[ 'prepend' ] );
                 };
+            }
 
-                $this->attributes[ $name ] = match ( $name ) {
-                    'class', 'classes' => $prepend
+            $this->attributes[ $name ] = match ( $name ) {
+                'class', 'classes' => $prepend
                         ?
                         \array_merge( Attribute::classes( $value ), $this->attributes[ $name ] )
                         : \array_merge( $this->attributes[ $name ], Attribute::classes( $value ) ),
-                    'style', 'styles'  => $prepend
+                'style', 'styles'  => $prepend
                         ?
                         \array_merge( Attribute::styles( $value ), $this->attributes[ $name ] )
                         : \array_merge( $this->attributes[ $name ], Attribute::styles( $value ) ),
-                    default            => toString( $value, ' ' ),
-                };
-            }
+                default            => toString( $value, ' ' ),
+            };
         }
         return $this;
     }
 
     public function set(
-        string | array        $attribute,
-        string | array | null $value = null,
+            string | array        $attribute,
+            string | array | null $value = null,
     ) : self
     {
         if ( \is_string( $attribute ) ) {
@@ -128,7 +127,7 @@ final class Attributes implements Countable, Stringable
     }
 
     public function get(
-        string $attribute,
+            string $attribute,
     ) : string | array | null
     {
         return match ( $attribute ) {
@@ -158,8 +157,8 @@ final class Attributes implements Countable, Stringable
     }
 
     public function has(
-        string                $attribute,
-        string | array | null $value = null,
+            string                $attribute,
+            string | array | null $value = null,
     ) : bool
     {
         if ( $value === null ) {
@@ -174,12 +173,12 @@ final class Attributes implements Countable, Stringable
             }
             else {
                 Log::error(
-                    'Unable to property compare the attribute {attribute} of {attributeType} to value of {valueType}. The types do not match.',
-                    [
-                        'attribute'     => $attribute,
-                        'attributeType' => \gettype( $attribute ),
-                        'valueType'     => \gettype( $value ),
-                    ],
+                        'Unable to property compare the attribute {attribute} of {attributeType} to value of {valueType}. The types do not match.',
+                        [
+                                'attribute'     => $attribute,
+                                'attributeType' => \gettype( $attribute ),
+                                'valueType'     => \gettype( $value ),
+                        ],
                 );
                 return false;
             }
@@ -222,8 +221,8 @@ final class Attributes implements Countable, Stringable
             // Skip empty arrays
             if ( \is_array( $value ) && empty( $value ) ) {
                 Log::error(
-                    'The attribute {attribute} provided an empty array value.',
-                    [ 'attribute' => $attribute, 'attributes' => $this->attributes ],
+                        'The attribute {attribute} provided an empty array value.',
+                        [ 'attribute' => $attribute, 'attributes' => $this->attributes ],
                 );
                 continue;
             }
@@ -285,11 +284,11 @@ final class Attributes implements Countable, Stringable
     }
 
     /**
+     * @internal
+     *
      * @param string  $attribute
      *
      * @return Attribute
-     * @internal
-     *
      */
     final public function edit( string $attribute ) : Attribute
     {
@@ -304,16 +303,16 @@ final class Attributes implements Countable, Stringable
     public static function sort( array $attributes, ?array $order = null, ?array $sortByList = null ) : array
     {
         $sortByList ??= [
-            'lang',
-            'id',
-            'href',
-            'src',
-            'rel',
-            'name',
-            'type',
-            'value',
-            'class',
-            'style',
+                'lang',
+                'id',
+                'href',
+                'src',
+                'rel',
+                'name',
+                'type',
+                'value',
+                'class',
+                'style',
         ];
 
         $sort = [];
