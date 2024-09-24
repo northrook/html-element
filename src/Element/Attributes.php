@@ -46,9 +46,9 @@ final class Attributes implements Countable, Stringable
     }
 
     public function add(
-            string | array        $attribute = null,
-            string | array | null $value = null,
-            bool                  $prepend = false,
+            string | array               $attribute = null,
+            string | array | bool | null $value = null,
+            bool                         $prepend = false,
     ) : self
     {
         if ( \is_string( $attribute ) ) {
@@ -68,26 +68,26 @@ final class Attributes implements Countable, Stringable
                     $prepend = true;
                     unset( $value[ 'prepend' ] );
                 };
-            }
 
-            $this->attributes[ $name ] = match ( $name ) {
-                'class', 'classes' => $prepend
-                        ?
-                        \array_merge( Attribute::classes( $value ), $this->attributes[ $name ] )
-                        : \array_merge( $this->attributes[ $name ], Attribute::classes( $value ) ),
-                'style', 'styles'  => $prepend
-                        ?
-                        \array_merge( Attribute::styles( $value ), $this->attributes[ $name ] )
-                        : \array_merge( $this->attributes[ $name ], Attribute::styles( $value ) ),
-                default            => toString( $value, ' ' ),
-            };
+                $this->attributes[ $name ] = match ( $name ) {
+                    'class', 'classes' => $prepend
+                            ?
+                            \array_merge( Attribute::classes( $value ), $this->attributes[ $name ] )
+                            : \array_merge( $this->attributes[ $name ], Attribute::classes( $value ) ),
+                    'style', 'styles'  => $prepend
+                            ?
+                            \array_merge( Attribute::styles( $value ), $this->attributes[ $name ] )
+                            : \array_merge( $this->attributes[ $name ], Attribute::styles( $value ) ),
+                    default            => $value,
+                };
+            }
         }
         return $this;
     }
 
     public function set(
-            string | array        $attribute,
-            string | array | null $value = null,
+            string | array               $attribute,
+            string | array | bool | null $value = null,
     ) : self
     {
         if ( \is_string( $attribute ) ) {
@@ -99,7 +99,7 @@ final class Attributes implements Countable, Stringable
                 'id'               => Attribute::id( $value ),
                 'class', 'classes' => Attribute::classes( $value ),
                 'style', 'styles'  => Attribute::styles( $value ),
-                default            => toString( $value, ' ' ),
+                default            => $value,
             };
         }
 
