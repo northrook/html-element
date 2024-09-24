@@ -37,15 +37,15 @@ class Element extends AbstractElement
      * @param mixed   $content
      */
     public function __construct(
-        string $tag = 'div',
-        array  $attributes = [],
-        mixed  $content = null,
+            string $tag = 'div',
+            array  $attributes = [],
+            mixed  $content = null,
     )
     {
         $this
-            ->tag( $tag )
-            ->assignAttributes( $attributes )
-            ->content( $content )
+                ->tag( $tag )
+                ->assignAttributes( $attributes )
+                ->content( $content )
         ;
     }
 
@@ -76,46 +76,54 @@ class Element extends AbstractElement
     }
 
     public static function a(
-        mixed                 $content,
-        string                $href,
-        null | string         $id = null,
-        null | string | array $class = null,
-        null | string | array $style = null,
-        null | string         $target = null,
-        null | string         $property = null,
-        ?string               ...$attribute
+            mixed                 $content,
+            string                $href,
+            null | string         $id = null,
+            null | string | array $class = null,
+            null | string | array $style = null,
+            null | string         $target = null,
+            null | string         $property = null,
+            ?string               ...$attribute
     ) : Element
     {
         return new Element(
-            'a', static::resolveVariables( \get_defined_vars() ), $content,
+                'a', static::resolveVariables( \get_defined_vars() ), $content,
         );
     }
 
     public static function button(
-        mixed $content,
-        array $attributes = [],
+            mixed $content,
+            array $attributes = [],
     ) : Element
     {
         return new Element(
-            'button', $attributes, $content,
+                'button', $attributes, $content,
         );
     }
 
     public static function ol(
-        mixed $content,
-        array $attributes = [],
+            mixed $content,
+            array $attributes = [],
     ) : Element
     {
         return new Element( 'ol', $attributes, $content );
     }
 
+    public static function ul(
+            mixed $content,
+            array $attributes = [],
+    ) : Element
+    {
+        return new Element( 'ul', $attributes, $content );
+    }
+
     public static function li(
-        mixed $content,
-        array $attributes = [],
+            mixed $content,
+            array $attributes = [],
     ) : Element
     {
         return new Element(
-            'li', $attributes, $content,
+                'li', $attributes, $content,
         );
     }
 
@@ -124,10 +132,10 @@ class Element extends AbstractElement
         \array_shift( $variables );
         $attributes = \array_pop( $variables );
         return arrayFilter(
-            [
-                ...$variables,
-                ...$attributes,
-            ],
+                [
+                        ...$variables,
+                        ...$attributes,
+                ],
         );
     }
 }
