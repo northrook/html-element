@@ -7,7 +7,7 @@ namespace Northrook\HTML;
 use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttributes, Tag};
 use function Northrook\arrayFilter;
-
+use function Northrook\filterUrl;
 
 /**
  * @property-read string    $html
@@ -73,6 +73,12 @@ class Element extends AbstractElement
             'meta'    => (string) new Element( 'meta', arrayFilter( $arguments ) ),
             default   => null
         };
+    }
+
+    public static function link( string $href, array $attributes = [] ) : Element
+    {
+        $attributes[ 'href' ] = filterUrl( $href );
+        return new Element( 'link', $attributes );
     }
 
     public static function a(
