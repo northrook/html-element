@@ -2,8 +2,7 @@
 
 namespace Northrook\HTML\Element;
 
-use const Northrook\EMPTY_STRING;
-
+use const String\EMPTY_STRING;
 
 trait DefaultAttributes
 {

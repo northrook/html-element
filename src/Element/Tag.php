@@ -7,7 +7,6 @@ namespace Northrook\HTML\Element;
 use Stringable, LogicException;
 use Northrook\Trait\PropertyAccessor;
 
-
 /**
  * @property-read string  $name
  * @property-read ?string $closingTag
@@ -17,77 +16,76 @@ final class Tag implements Stringable
 {
     use PropertyAccessor;
 
-
-    public const TAGS = [
-        'div',
-        'body',
-        'html',
-        'li',
-        'dropdown',
-        'menu',
-        'modal',
-        'field',
-        'fieldset',
-        'legend',
-        'label',
-        'option',
-        'script',
-        'style',
-        'select',
-        'input',
-        'textarea',
-        'form',
-        'tooltip',
-        'section',
-        'main',
-        'header',
-        'footer',
-        'div',
-        'span',
-        'p',
-        'ul',
-        'a',
-        'img',
-        'button',
-        'i',
-        'strong',
-        'em',
-        'sup',
-        'sub',
-        'br',
-        'hr',
-        'hgroup',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
+    public const array TAGS = [
+            'div',
+            'body',
+            'html',
+            'li',
+            'dropdown',
+            'menu',
+            'modal',
+            'field',
+            'fieldset',
+            'legend',
+            'label',
+            'option',
+            'script',
+            'style',
+            'select',
+            'input',
+            'textarea',
+            'form',
+            'tooltip',
+            'section',
+            'main',
+            'header',
+            'footer',
+            'div',
+            'span',
+            'p',
+            'ul',
+            'a',
+            'img',
+            'button',
+            'i',
+            'strong',
+            'em',
+            'sup',
+            'sub',
+            'br',
+            'hr',
+            'hgroup',
+            'h1',
+            'h2',
+            'h3',
+            'h4',
+            'h5',
+            'h6',
     ];
 
-    public const HEADING = [ 'hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
+    public const array HEADING = [ 'hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
 
     /**
      * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Content_categories#flow_content MDN
      */
-    public const INLINE = [ 'a', 'b', 'string', 'cite', 'code', 'em', 'i', 'kbd', 'mark', 'span', 's', 'small', 'wbr' ];
+    public const array INLINE = [ 'a', 'b', 'string', 'cite', 'code', 'em', 'i', 'kbd', 'mark', 'span', 's', 'small', 'wbr' ];
 
-    public const SELF_CLOSING = [
-        'area',
-        'base',
-        'br',
-        'col',
-        'embed',
-        'hr',
-        'img',
-        'input',
-        'keygen',
-        'link',
-        'meta',
-        'param',
-        'source',
-        'track',
-        'wbr',
+    public const array SELF_CLOSING = [
+            'area',
+            'base',
+            'br',
+            'col',
+            'embed',
+            'hr',
+            'img',
+            'input',
+            'keygen',
+            'link',
+            'meta',
+            'param',
+            'source',
+            'track',
+            'wbr',
     ];
 
     /**

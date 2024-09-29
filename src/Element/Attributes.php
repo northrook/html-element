@@ -5,7 +5,7 @@ namespace Northrook\HTML\Element;
 use Countable, Stringable;
 use Northrook\HTML\AbstractElement;
 use Northrook\Logger\Log;
-use function Northrook\toString;
+use function Support\toString;
 
 final class Attributes implements Countable, Stringable
 {

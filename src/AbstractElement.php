@@ -16,8 +16,8 @@ namespace Northrook\HTML;
 use Northrook\HTML\Element\Attributes;
 use Northrook\HTML\Element\Tag;
 use Northrook\Interface\Printable;
-use const Northrook\{WHITESPACE, EMPTY_STRING};
-use function Northrook\toString;
+use const String\{WHITESPACE, EMPTY_STRING};
+use function Support\toString;
 
 
 class AbstractElement implements Printable

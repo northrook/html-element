@@ -11,7 +11,7 @@ use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element;
 use Stringable, LogicException;
 use voku\helper\ASCII;
-use function Northrook\normalizeKey;
+use function String\normalizeKey;
 
 
 /**
