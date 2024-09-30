@@ -16,7 +16,7 @@ namespace Northrook\HTML;
 use Northrook\HTML\Element\Attributes;
 use Northrook\HTML\Element\Tag;
 use Northrook\Interface\Printable;
-use const String\{WHITESPACE, EMPTY_STRING};
+use const Support\{WHITESPACE, EMPTY_STRING};
 use function Support\toString;
 
 

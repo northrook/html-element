@@ -6,7 +6,7 @@ namespace Northrook\HTML;
 
 use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttributes, Tag};
-use function Array\filter;
+use Support\Arr;
 use function String\filterUrl;
 
 /**
@@ -22,7 +22,6 @@ use function String\filterUrl;
 class Element extends AbstractElement
 {
     use PropertyAccessor, AttributeMethods, DefaultAttributes;
-
 
     /** @var string Rendered HTML */
     protected string $html;
@@ -45,8 +44,7 @@ class Element extends AbstractElement
         $this
                 ->tag( $tag )
                 ->assignAttributes( $attributes )
-                ->content( $content )
-        ;
+                ->content( $content );
     }
 
     /**
@@ -70,7 +68,7 @@ class Element extends AbstractElement
         return match ( $name ) {
             'classes' => \implode( ' ', Attribute::classes( ...$arguments ) ),
             'styles'  => \implode( '; ', Attribute::styles( ...$arguments ) ),
-            'meta'    => (string) new Element( 'meta', filter( $arguments ) ),
+            'meta'    => (string) new Element( 'meta', Arr::filter( $arguments ) ),
             default   => null
         };
     }
@@ -137,7 +135,7 @@ class Element extends AbstractElement
     {
         \array_shift( $variables );
         $attributes = \array_pop( $variables );
-        return filter(
+        return Arr::filter(
                 [
                         ...$variables,
                         ...$attributes,

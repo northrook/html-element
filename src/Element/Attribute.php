@@ -10,8 +10,8 @@ use Northrook\Settings;
 use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element;
 use Stringable, LogicException;
+use Support\Normalize;
 use voku\helper\ASCII;
-use function String\normalizeKey;
 
 
 /**
@@ -115,7 +115,7 @@ final readonly class Attribute implements Stringable
             return ASCII::to_slugify( $string, $separator, Settings::get( 'language.locale' ) );
         }
 
-        return normalizeKey( $string, $separator );
+        return Normalize::key( $string, $separator );
     }
 
     public static function classes( null | string | array ...$attribute ) : array
