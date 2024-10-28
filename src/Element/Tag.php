@@ -144,6 +144,10 @@ final class Tag implements Stringable
      */
     public static function isValidTag( ?string $string = null ) : bool
     {
+        if ( ! $string ) {
+            return false;
+        }
+
         return \in_array( \strtolower( $string ), [...Tag::TAGS, ...Tag::SELF_CLOSING], true );
     }
 }

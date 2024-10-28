@@ -8,7 +8,7 @@ use Northrook\Logger\Log;
 
 final class Attributes implements Countable, Stringable
 {
-    /** @var array */
+    /** @var array<string, mixed> */
     private array $attributes = [];
 
     /**
@@ -120,6 +120,11 @@ final class Attributes implements Countable, Stringable
         return $this->attributes['class'];
     }
 
+    /**
+     * @param string  $attribute
+     *
+     * @return null|string|array
+     */
     public function get(
         string $attribute,
     ) : string|array|null {

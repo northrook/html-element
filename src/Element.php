@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace Northrook\HTML;
 
+use Northrook\Interface\Printable;
 use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttributes, StaticElements, Tag};
-use Support\Arr;
-use function String\filterUrl;
 
 /**
  * @property-read string    $html
  * @property-read Attribute $class
  * @property-read Attribute $style
- *
- * @method static string classes( string | array ...$classes )
- * @method static string styles( string | array ...$styles )
  */
 class Element extends AbstractElement
 {
@@ -29,9 +25,9 @@ class Element extends AbstractElement
     public readonly Attributes $attributes;
 
     /**
-     * @param string $tag        =  [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
-     * @param array  $attributes
-     * @param mixed  $content
+     * @param string                                                         $tag        =  [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
+     * @param array<string, mixed>                                           $attributes
+     * @param null|array<array-key, Element|Printable|string>|Element|string $content
      */
     public function __construct(
         string $tag = 'div',
@@ -60,84 +56,23 @@ class Element extends AbstractElement
         };
     }
 
-    public static function __callStatic( string $name, array $arguments )
+    /**
+     * @param array<string, string>|string $classes
+     *
+     * @return string
+     */
+    public static function classes( string|array $classes ) : string
     {
-        return match ( $name ) {
-            'classes' => \implode( ' ', Attribute::classes( ...$arguments ) ),
-            'styles'  => \implode( '; ', Attribute::styles( ...$arguments ) ),
-            'meta'    => (string) new Element( 'meta', Arr::filter( $arguments ) ),
-            default   => null,
-        };
+        return \implode( ' ', Attribute::classes( $classes ) );
     }
 
-    public static function link( string $href, array $attributes = [] ) : Element
+    /**
+     * @param array<string, string>|string $styles
+     *
+     * @return string
+     */
+    public static function styles( string|array $styles ) : string
     {
-        $attributes['href'] = filterUrl( $href );
-        return new Element( 'link', $attributes );
-    }
-
-    public static function a(
-        mixed             $content,
-        string            $href,
-        ?string           $id = null,
-        null|string|array $class = null,
-        null|string|array $style = null,
-        ?string           $target = null,
-        ?string           $property = null,
-        ?string        ...$attribute,
-    ) : Element {
-        return new Element(
-            'a',
-            static::resolveVariables( \get_defined_vars() ),
-            $content,
-        );
-    }
-
-    public static function button(
-        mixed $content,
-        array $attributes = [],
-    ) : Element {
-        return new Element(
-            'button',
-            $attributes,
-            $content,
-        );
-    }
-
-    public static function ol(
-        mixed $content,
-        array $attributes = [],
-    ) : Element {
-        return new Element( 'ol', $attributes, $content );
-    }
-
-    public static function ul(
-        mixed $content,
-        array $attributes = [],
-    ) : Element {
-        return new Element( 'ul', $attributes, $content );
-    }
-
-    public static function li(
-        mixed $content,
-        array $attributes = [],
-    ) : Element {
-        return new Element(
-            'li',
-            $attributes,
-            $content,
-        );
-    }
-
-    final protected static function resolveVariables( array $variables ) : array
-    {
-        \array_shift( $variables );
-        $attributes = \array_pop( $variables );
-        return Arr::filter(
-            [
-                ...$variables,
-                ...$attributes,
-            ],
-        );
+        return \implode( '; ', Attribute::styles( $styles ) );
     }
 }

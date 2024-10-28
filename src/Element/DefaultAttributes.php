@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Northrook\HTML\Element;
 
+use Override;
 use const Support\EMPTY_STRING;
 
 trait DefaultAttributes
@@ -10,10 +13,14 @@ trait DefaultAttributes
 
     public readonly Attributes $attributes;
 
+    /**
+     * @return array<string, string>
+     */
+    #[Override]
     public function getAttributes() : array
     {
         if ( $this->tag->is( 'heading' ) ) {
-            $this->attributes->set( 'class', ['heading', ...$this->attributes->get( 'class' )] );
+            $this->class( 'heading', prepend: true );
         }
 
         if ( $this->tag->is( 'button' ) ) {

@@ -17,6 +17,7 @@ use Northrook\HTML\Element\{Attributes, Tag};
 use Northrook\Interface\Printable;
 use const Support\{WHITESPACE, EMPTY_STRING};
 use function Support\toString;
+use Stringable;
 
 class AbstractElement implements Printable
 {
@@ -24,6 +25,7 @@ class AbstractElement implements Printable
 
     public readonly Attributes $attributes;
 
+    /** @var array<array-key, Element|Printable|string> */
     protected array $content = [];
 
     /** @var string Rendered HTML */
@@ -59,6 +61,12 @@ class AbstractElement implements Printable
         return $this;
     }
 
+    /**
+     * @param null|array<string, mixed>|string $add
+     * @param null|array<string, mixed>|string $value
+     *
+     * @return $this
+     */
     public function attributes(
         string|array|null $add = null,
         string|array|null $value = null,
@@ -70,6 +78,12 @@ class AbstractElement implements Printable
         return $this;
     }
 
+    /**
+     * @param null|array<array-key, Element|Printable|string>|Element|string $content
+     * @param bool                                                           $prepend
+     *
+     * @return $this
+     */
     public function content( string|array|Element|null $content, bool $prepend = false ) : static
     {
         if ( null === $content ) {
@@ -95,7 +109,7 @@ class AbstractElement implements Printable
         $content = [];
 
         foreach ( $this->content as $html ) {
-            $content[] = \trim( $html );
+            $content[] = \trim( $html instanceof Stringable ? $html->__toString() : $html );
         }
 
         return \implode( $contentSeparator, $content );
@@ -131,7 +145,7 @@ class AbstractElement implements Printable
      */
     public function __toString() : string
     {
-        return $this->buildElement()->html;
+        return $this->toString() ?: EMPTY_STRING;
     }
 
     public function toString( string $contentSeparator = EMPTY_STRING ) : ?string
@@ -148,6 +162,11 @@ class AbstractElement implements Printable
         echo $this->toString( $contentSeparator );
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     *
+     * @return $this
+     */
     final protected function assignAttributes( array $attributes = [] ) : static
     {
         $this->attributes ??= new Attributes();
@@ -157,6 +176,9 @@ class AbstractElement implements Printable
         return $this;
     }
 
+    /**
+     * @return array<string, string> `array[$attribute] = $attribute="$value"`
+     */
     public function getAttributes() : array
     {
         return $this->attributes->toArray();

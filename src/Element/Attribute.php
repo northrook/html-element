@@ -6,7 +6,6 @@ namespace Northrook\HTML\Element;
 
 use Northrook\HTML\{AbstractElement, Element};
 use Northrook\Logger\Log;
-use Northrook\Settings;
 use Northrook\Trait\PropertyAccessor;
 use Stringable, LogicException;
 use Support\Normalize;
@@ -53,25 +52,25 @@ final readonly class Attribute implements Stringable
      * @param null|array|string $value   The value to add
      * @param bool              $prepend Optionally prepend classes and styles
      *
-     * @return Attributes|Element
+     * @return AbstractElement|Attributes
      */
-    public function add( null|string|array $value, bool $prepend = false ) : Attributes|AbstractElement
+    public function add( null|string|array $value, bool $prepend = false ) : AbstractElement|Attributes
     {
         $this->attributes->add( $this->attribute, $value, $prepend );
-        return $this->element ?: $this->attributes;
+        return $this->element ?? $this->attributes;
     }
 
     /**
      * Set the value of the attribute.
      *
-     * @param string[] $value the value to set, This overrides the existing value
+     * @param string ...$value the value to set, This overrides the existing value
      *
-     * @return Attributes|Element
+     * @return AbstractElement|Attributes
      */
-    public function set( string ...$value ) : Attributes|AbstractElement
+    public function set( string ...$value ) : AbstractElement|Attributes
     {
         $this->attributes->set( $this->attribute, $value );
-        return $this->element ?: $this->attributes;
+        return $this->element ?? $this->attributes;
     }
 
     /**
@@ -104,11 +103,10 @@ final readonly class Attribute implements Stringable
      */
     public static function id( string|array $string, string $separator = '-' ) : string
     {
-        // TODO : Check if $id is already in use, do this in a Core class
-        // TODO : Get ASCII lang from Core\Settings
 
         if ( \class_exists( ASCII::class ) ) {
-            return ASCII::to_slugify( $string, $separator, Settings::get( 'language.locale' ) );
+            $string = \is_array( $string ) ? \implode( $separator, $string ) : $string;
+            return ASCII::to_slugify( $string, $separator );
         }
 
         return Normalize::key( $string, $separator );
@@ -152,6 +150,12 @@ final readonly class Attribute implements Stringable
         return $styles;
     }
 
+    /**
+     * @param null|array|string $attribute
+     * @param non-empty-string  $separator
+     *
+     * @return array
+     */
     private static function explode( null|string|array $attribute, string $separator ) : array
     {
         if ( ! $attribute ) {
