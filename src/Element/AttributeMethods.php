@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Northrook\HTML\Element;
 
@@ -19,14 +19,14 @@ trait AttributeMethods
      *
      * - Prepend classes using the named argument `prepend: true`.
      *
-     * @param string|bool  ...$add
+     * @param bool|string ...$add
      *
      * @return $this
      */
-    final public function class( string | bool ...$add ) : static
+    final public function class( string|bool ...$add ) : static
     {
         $prepend = \array_key_exists( 'prepend', $add );
-        unset( $add[ 'prepend' ] );
+        unset( $add['prepend'] );
 
         $this->attributes->add( 'class', $add, $prepend );
         return $this;
@@ -37,14 +37,14 @@ trait AttributeMethods
      *
      * - Prepend styles using the named argument `prepend: true`.
      *
-     * @param string|bool  ...$add
+     * @param bool|string ...$add
      *
      * @return $this
      */
-    final public function style( string | bool ...$add ) : static
+    final public function style( string|bool ...$add ) : static
     {
         $prepend = \array_key_exists( 'prepend', $add );
-        unset( $add[ 'prepend' ] );
+        unset( $add['prepend'] );
 
         $this->attributes->add( 'style', $add, $prepend );
         return $this;

@@ -9,22 +9,22 @@
 
 /-------------------------------------------------------------------*/
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Northrook\HTML;
 
-use Northrook\HTML\Element\Attributes;
-use Northrook\HTML\Element\Tag;
+use Northrook\HTML\Element\{Attributes, Tag};
 use Northrook\Interface\Printable;
 use const Support\{WHITESPACE, EMPTY_STRING};
 use function Support\toString;
 
-
 class AbstractElement implements Printable
 {
-    protected readonly Tag     $tag;
+    protected readonly Tag $tag;
+
     public readonly Attributes $attributes;
-    protected array            $content = [];
+
+    protected array $content = [];
 
     /** @var string Rendered HTML */
     protected string $html;
@@ -58,11 +58,11 @@ class AbstractElement implements Printable
 
         return $this;
     }
+
     public function attributes(
-        string | array | null $add = null,
-        string | array | null $value = null,
-    ) : static
-    {
+        string|array|null $add = null,
+        string|array|null $value = null,
+    ) : static {
         $this->attributes ??= new Attributes();
 
         $this->attributes->add( $add, $value );
@@ -70,21 +70,21 @@ class AbstractElement implements Printable
         return $this;
     }
 
-    public function content( string | array | Element | null $content, bool $prepend = false ) : static
+    public function content( string|array|Element|null $content, bool $prepend = false ) : static
     {
-        if ( $content === null ) {
+        if ( null === $content ) {
             return $this;
         }
 
-        if ( !\is_array( $content ) ) {
-            $content = [ $content ];
+        if ( ! \is_array( $content ) ) {
+            $content = [$content];
         }
 
         if ( $prepend ) {
-            $this->content = [ ... $content, ... $this->content ];
+            $this->content = [...$content, ...$this->content];
         }
         else {
-            $this->content = [ ... $this->content, ... $content ];
+            $this->content = [...$this->content, ...$content];
         }
 
         return $this;
@@ -93,6 +93,7 @@ class AbstractElement implements Printable
     protected function buildContent( string $contentSeparator = EMPTY_STRING ) : string
     {
         $content = [];
+
         foreach ( $this->content as $html ) {
             $content[] = \trim( $html );
         }
@@ -109,7 +110,7 @@ class AbstractElement implements Printable
         $this->onBuild();
 
         if ( $attributes = toString( $this->getAttributes(), WHITESPACE ) ) {
-            $attributes = " $attributes";
+            $attributes = " {$attributes}";
         }
 
         $this->html = toString(
@@ -118,6 +119,7 @@ class AbstractElement implements Printable
                 toString( $this->content, $contentSeparator ),
                 $this->tag->closingTag,
             ],
+            $contentSeparator,
         );
         return $this;
     }
@@ -159,5 +161,4 @@ class AbstractElement implements Printable
     {
         return $this->attributes->toArray();
     }
-
 }

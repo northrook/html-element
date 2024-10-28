@@ -6,14 +6,14 @@ use const Support\EMPTY_STRING;
 
 trait DefaultAttributes
 {
+    protected readonly Tag $tag;
 
-    protected readonly Tag     $tag;
     public readonly Attributes $attributes;
 
     public function getAttributes() : array
     {
         if ( $this->tag->is( 'heading' ) ) {
-            $this->attributes->set( 'class', [ 'heading', ... $this->attributes->get( 'class' ) ] );
+            $this->attributes->set( 'class', ['heading', ...$this->attributes->get( 'class' )] );
         }
 
         if ( $this->tag->is( 'button' ) ) {

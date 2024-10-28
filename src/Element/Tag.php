@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Northrook\HTML\Element;
 
@@ -17,92 +17,90 @@ final class Tag implements Stringable
     use PropertyAccessor;
 
     public const array TAGS = [
-            'div',
-            'body',
-            'html',
-            'li',
-            'dropdown',
-            'menu',
-            'modal',
-            'field',
-            'fieldset',
-            'legend',
-            'label',
-            'option',
-            'script',
-            'style',
-            'select',
-            'input',
-            'textarea',
-            'form',
-            'tooltip',
-            'section',
-            'main',
-            'header',
-            'footer',
-            'div',
-            'span',
-            'p',
-            'ul',
-            'a',
-            'img',
-            'button',
-            'i',
-            'strong',
-            'em',
-            'sup',
-            'sub',
-            'br',
-            'hr',
-            'hgroup',
-            'h1',
-            'h2',
-            'h3',
-            'h4',
-            'h5',
-            'h6',
+        'div',
+        'body',
+        'html',
+        'li',
+        'dropdown',
+        'menu',
+        'modal',
+        'field',
+        'fieldset',
+        'legend',
+        'label',
+        'option',
+        'script',
+        'style',
+        'select',
+        'input',
+        'textarea',
+        'form',
+        'tooltip',
+        'section',
+        'main',
+        'header',
+        'footer',
+        'div',
+        'span',
+        'p',
+        'ul',
+        'a',
+        'img',
+        'button',
+        'i',
+        'strong',
+        'em',
+        'sup',
+        'sub',
+        'br',
+        'hr',
+        'hgroup',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
     ];
 
-    public const array HEADING = [ 'hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
+    public const array HEADING = ['hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
-    /**
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Content_categories#flow_content MDN
-     */
-    public const array INLINE = [ 'a', 'b', 'string', 'cite', 'code', 'em', 'i', 'kbd', 'mark', 'span', 's', 'small', 'wbr' ];
+    /** @link https://developer.mozilla.org/en-US/docs/Web/HTML/Content_categories#flow_content MDN */
+    public const array INLINE = ['a', 'b', 'string', 'cite', 'code', 'em', 'i', 'kbd', 'mark', 'span', 's', 'small', 'wbr'];
 
     public const array SELF_CLOSING = [
-            'area',
-            'base',
-            'br',
-            'col',
-            'embed',
-            'hr',
-            'img',
-            'input',
-            'keygen',
-            'link',
-            'meta',
-            'param',
-            'source',
-            'track',
-            'wbr',
+        'area',
+        'base',
+        'br',
+        'col',
+        'embed',
+        'hr',
+        'img',
+        'input',
+        'keygen',
+        'link',
+        'meta',
+        'param',
+        'source',
+        'track',
+        'wbr',
     ];
 
     /**
-     * @param string  $name  = [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
+     * @param string $name = [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
      */
     public function __construct( private string $name = 'div' )
     {
         $this->set( $name );
     }
 
-    public function __get( string $property ) : string | bool | null
+    public function __get( string $property ) : string|bool|null
     {
         return match ( $property ) {
             'name'          => $this->name,
             'closingTag'    => \in_array( $this->name, Tag::SELF_CLOSING ) ? null : "</{$this->name}>",
             'isSelfClosing' => \in_array( $this->name, Tag::SELF_CLOSING ),
-            default         => throw new LogicException( 'Invalid property: ' . $property ),
+            default         => throw new LogicException( 'Invalid property: '.$property ),
         };
     }
 
@@ -112,7 +110,7 @@ final class Tag implements Stringable
     }
 
     /**
-     * @param string  $name  = [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
+     * @param string $name = [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
      *
      * @return Tag
      */
@@ -123,15 +121,15 @@ final class Tag implements Stringable
     }
 
     /**
-     * @param string  $name  = [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'heading', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
+     * @param string $name = [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'heading', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
      *
      * @return bool
      */
     public function is( string $name ) : bool
     {
         return match ( $name ) {
-            'heading' => \in_array( $this->name, [ 'hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ),
-            default   => $this->name === $name
+            'heading' => \in_array( $this->name, ['hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'] ),
+            default   => $this->name === $name,
         };
     }
 
@@ -140,12 +138,12 @@ final class Tag implements Stringable
      *
      * - Only checks native HTML tags.
      *
-     * @param ?string  $string
+     * @param ?string $string
      *
      * @return bool
      */
     public static function isValidTag( ?string $string = null ) : bool
     {
-        return \in_array( \strtolower( $string ), [ ... Tag::TAGS, ... Tag::SELF_CLOSING ], true );
+        return \in_array( \strtolower( $string ), [...Tag::TAGS, ...Tag::SELF_CLOSING], true );
     }
 }

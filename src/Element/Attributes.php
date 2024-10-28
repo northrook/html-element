@@ -5,40 +5,37 @@ namespace Northrook\HTML\Element;
 use Countable, Stringable;
 use Northrook\HTML\AbstractElement;
 use Northrook\Logger\Log;
-use function Support\toString;
 
 final class Attributes implements Countable, Stringable
 {
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private array $attributes = [];
 
     /**
-     * @param array  $attributes  [optional] assigns provided attributes to this object.
+     * @param array            $attributes [optional] assigns provided attributes to this object
+     * @param ?AbstractElement $parent
      */
     public function __construct(
-            array                             $attributes = [],
-            private readonly ?AbstractElement $parent = null,
-    )
-    {
+        array                             $attributes = [],
+        private readonly ?AbstractElement $parent = null,
+    ) {
         $this->assign( $attributes );
     }
 
     /**
-     * @param array  $attributes
+     * @param array $attributes
      *
      * @return $this
      */
     public function assign( array $attributes ) : self
     {
-        if ( !empty( $this->attributes ) ) {
+        if ( ! empty( $this->attributes ) ) {
             foreach ( $attributes as $name => $value ) {
                 $this->add( $name, $value );
             }
             return $this;
         }
+
         foreach ( $attributes as $name => $value ) {
             $this->set( $name, $value );
         }
@@ -46,60 +43,57 @@ final class Attributes implements Countable, Stringable
     }
 
     public function add(
-            string | array               $attribute = null,
-            string | array | bool | null $value = null,
-            bool                         $prepend = false,
-    ) : self
-    {
+        string|array           $attribute = null,
+        string|array|bool|null $value = null,
+        bool                   $prepend = false,
+    ) : self {
         if ( \is_string( $attribute ) ) {
-            $attribute = [ $attribute => $value ];
+            $attribute = [$attribute => $value];
         }
 
         foreach ( $attribute as $name => $value ) {
-            $current = $this->attributes[ $name ] ?? false;
+            $current = $this->attributes[$name] ?? false;
 
-            if ( $current === false ) {
+            if ( false === $current ) {
                 $this->set( $name, $value );
+
                 continue;
             }
 
             if ( \is_array( $value ) ) {
-                if ( \array_key_exists( 'prepend', $value ) && $value[ 'prepend' ] === true ) {
+                if ( \array_key_exists( 'prepend', $value ) && true === $value['prepend'] ) {
                     $prepend = true;
-                    unset( $value[ 'prepend' ] );
-                };
+                    unset( $value['prepend'] );
+                }
             }
 
-                $this->attributes[ $name ] = match ( $name ) {
-                    'class', 'classes' => $prepend
-                            ?
-                            \array_merge( Attribute::classes( $value ), $this->attributes[ $name ] )
-                            : \array_merge( $this->attributes[ $name ], Attribute::classes( $value ) ),
-                    'style', 'styles'  => $prepend
-                            ?
-                            \array_merge( Attribute::styles( $value ), $this->attributes[ $name ] )
-                            : \array_merge( $this->attributes[ $name ], Attribute::styles( $value ) ),
-                    default            => $value,
-                };
+            $this->attributes[$name] = match ( $name ) {
+                'class', 'classes' => $prepend
+                        ? \array_merge( Attribute::classes( $value ), $this->attributes[$name] )
+                        : \array_merge( $this->attributes[$name], Attribute::classes( $value ) ),
+                'style', 'styles' => $prepend
+                        ? \array_merge( Attribute::styles( $value ), $this->attributes[$name] )
+                        : \array_merge( $this->attributes[$name], Attribute::styles( $value ) ),
+                default => $value,
+            };
         }
         return $this;
     }
 
     public function set(
-            string | array               $attribute,
-            string | array | bool | null $value = null,
-    ) : self
-    {
+        string|array           $attribute,
+        string|array|bool|null $value = null,
+    ) : self {
         if ( \is_string( $attribute ) ) {
-            $attribute = [ $attribute => $value ];
+            $attribute = [$attribute => $value];
         }
 
         foreach ( $attribute as $name => $value ) {
-            $this->attributes[ $name ] = match ( $name ) {
-                'id'               => Attribute::id( $value ),
+            $this->attributes[$name] = match ( $name ) {
+                'id' => Attribute::id( $value ),
                 'class', 'classes' => Attribute::classes( $value ),
-                'style', 'styles'  => Attribute::styles( $value ),
-                default            => $value,
+                'style', 'styles' => Attribute::styles( $value ),
+                default => $value,
             };
         }
 
@@ -116,72 +110,70 @@ final class Attributes implements Countable, Stringable
 
     private function classAttribute() : array
     {
-        if ( !isset( $this->attributes[ 'class' ] ) ) {
+        if ( ! isset( $this->attributes['class'] ) ) {
             return [];
         }
-        if ( !\is_array( $this->attributes[ 'class' ] ) ) {
+        if ( ! \is_array( $this->attributes['class'] ) ) {
             dump( $this );
             return [];
         }
-        return $this->attributes[ 'class' ];
+        return $this->attributes['class'];
     }
 
     public function get(
-            string $attribute,
-    ) : string | array | null
-    {
+        string $attribute,
+    ) : string|array|null {
         return match ( $attribute ) {
             'class', 'classes' => $this->classAttribute(),
-            'style', 'styles'  => ( function()
-            {
+            'style', 'styles' => ( function() {
                 $styles = [];
-                foreach ( $this->attributes[ 'style' ] ?? [] as $style => $val ) {
-                    $styles[ $style ] = "$style: $val;";
+
+                foreach ( $this->attributes['style'] ?? [] as $style => $val ) {
+                    $styles[$style] = "{$style}: {$val};";
                 }
                 return $styles;
             } )(),
         };
     }
 
-    public function pull( string $attribute ) : string | array | null
+    public function pull( string $attribute ) : string|array|null
     {
         $value = $this->get( $attribute ) ?? null;
-        unset( $this->attributes[ $attribute ] );
+        unset( $this->attributes[$attribute] );
         return $value;
     }
 
     public function remove( string $attribute ) : self
     {
-        unset( $this->attributes[ $attribute ] );
+        unset( $this->attributes[$attribute] );
         return $this;
     }
 
     public function has(
-            string                $attribute,
-            string | array | null $value = null,
-    ) : bool
-    {
-        if ( $value === null ) {
-            return isset( $this->attributes[ $attribute ] );
+        string            $attribute,
+        string|array|null $value = null,
+    ) : bool {
+        if ( null === $value ) {
+            return isset( $this->attributes[$attribute] );
         }
 
-        $attribute = $this->attributes[ $attribute ];
+        $attribute = $this->attributes[$attribute];
 
         if ( \is_string( $attribute ) ) {
             if ( \is_string( $value ) ) {
                 return $attribute === $value;
             }
-            else {
-                Log::error(
-                        'Unable to property compare the attribute {attribute} of {attributeType} to value of {valueType}. The types do not match.',
-                        [
-                                'attribute'     => $attribute,
-                                'attributeType' => \gettype( $attribute ),
-                                'valueType'     => \gettype( $value ),
-                        ],
-                );
-                return false;
-            }
+
+            Log::error(
+                'Unable to property compare the attribute {attribute} of {attributeType} to value of {valueType}. The types do not match.',
+                [
+                    'attribute'     => $attribute,
+                    'attributeType' => \gettype( $attribute ),
+                    'valueType'     => \gettype( $value ),
+                ],
+            );
+            return false;
+
         }
 
         if ( \is_array( $attribute ) ) {
@@ -221,9 +213,10 @@ final class Attributes implements Countable, Stringable
             // Skip empty arrays
             if ( \is_array( $value ) && empty( $value ) ) {
                 Log::error(
-                        'The attribute {attribute} provided an empty array value.',
-                        [ 'attribute' => $attribute, 'attributes' => $this->attributes ],
+                    'The attribute {attribute} provided an empty array value.',
+                    ['attribute' => $attribute, 'attributes' => $this->attributes],
                 );
+
                 continue;
             }
 
@@ -239,7 +232,7 @@ final class Attributes implements Countable, Stringable
             // }
 
             // Convert types to string
-            $value = match ( gettype( $value ) ) {
+            $value = match ( \gettype( $value ) ) {
                 'string'  => $value,
                 'boolean' => $value ? 'true' : 'false',
                 'array'   => \implode( ' ', \array_filter( $value ) ),
@@ -248,7 +241,7 @@ final class Attributes implements Countable, Stringable
                 default   => (string) $value,
             };
 
-            $attributes[ $attribute ] = $value;
+            $attributes[$attribute] = $value;
         }
 
         return $this::sort( $attributes );
@@ -264,15 +257,16 @@ final class Attributes implements Countable, Stringable
         $quote = $useSingleQuote ? "'" : '"';
 
         $attributes = [];
+
         foreach ( $this->getAttributes() as $attribute => $value ) {
             // Check if the attribute is considered a boolean
             if ( null === $value || $this->isBooleanAttribute( $attribute ) ) {
-                $attributes[ $attribute ] = $attribute;
+                $attributes[$attribute] = $attribute;
             }
 
             // Discard empty values, assign the attribute="value" as string
             else {
-                $attributes[ $attribute ] = $attribute . '=' . $quote . $value . $quote;
+                $attributes[$attribute] = $attribute.'='.$quote.$value.$quote;
             }
         }
         return $attributes;
@@ -280,13 +274,13 @@ final class Attributes implements Countable, Stringable
 
     private function isBooleanAttribute( string $attribute ) : bool
     {
-        return \in_array( $attribute, [ 'disabled', 'readonly', 'required', 'checked', 'hidden', 'autofocus', ], true );
+        return \in_array( $attribute, ['disabled', 'readonly', 'required', 'checked', 'hidden', 'autofocus'], true );
     }
 
     /**
      * @internal
      *
-     * @param string  $attribute
+     * @param string $attribute
      *
      * @return Attribute
      */
@@ -303,23 +297,23 @@ final class Attributes implements Countable, Stringable
     public static function sort( array $attributes, ?array $order = null, ?array $sortByList = null ) : array
     {
         $sortByList ??= [
-                'lang',
-                'id',
-                'href',
-                'src',
-                'rel',
-                'name',
-                'type',
-                'value',
-                'class',
-                'style',
+            'lang',
+            'id',
+            'href',
+            'src',
+            'rel',
+            'name',
+            'type',
+            'value',
+            'class',
+            'style',
         ];
 
         $sort = [];
 
         foreach ( $order ?? $sortByList as $value ) {
             if ( \array_key_exists( $value, $attributes ) ) {
-                $sort[ $value ] = $attributes[ $value ];
+                $sort[$value] = $attributes[$value];
             }
         }
 
