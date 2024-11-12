@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Northrook\HTML\Element;
 
 use Stringable, LogicException;
-use Northrook\Trait\PropertyAccessor;
+use Support\PropertyAccessor;
 
 /**
  * @property-read string  $name

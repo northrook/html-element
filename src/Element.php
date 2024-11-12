@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Northrook\HTML;
 
-use Northrook\Interface\Printable;
-use Northrook\Trait\PropertyAccessor;
 use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttributes, StaticElements, Tag};
+use Interface\Printable;
+use Support\PropertyAccessor;
 
 /**
  * @property-read string    $html

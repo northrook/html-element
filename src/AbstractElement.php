@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Northrook\HTML;
 
 use Northrook\HTML\Element\{Attributes, Tag};
-use Northrook\Interface\Printable;
+use Interface\Printable;
 use const Support\{WHITESPACE, EMPTY_STRING};
 use function Support\toString;
 use Stringable;

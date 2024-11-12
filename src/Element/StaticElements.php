@@ -20,7 +20,6 @@ trait StaticElements
         null|string|array $content = null,
                        ...$attributes,
     ) : Element {
-
         return new Element( 'meta' );
     }
 
@@ -69,7 +68,7 @@ trait StaticElements
     final protected static function resolveVariables( array $variables ) : array
     {
         \array_shift( $variables );
-        $attributes = \array_pop( $variables );
-        return Arr::filter( [...$variables, ...$attributes]);
+        $attributes = \array_pop( $variables ) ?? [];
+        return Arr::filter( [...$variables, ...$attributes] );
     }
 }

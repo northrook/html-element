@@ -6,15 +6,14 @@ namespace Northrook\HTML\Element;
 
 use Northrook\HTML\{AbstractElement, Element};
 use Northrook\Logger\Log;
-use Northrook\Trait\PropertyAccessor;
+use Support\{Normalize, PropertyAccessor};
 use Stringable, LogicException;
-use Support\Normalize;
 use voku\helper\ASCII;
 
 /**
- * @property-read string $value
- *
  * @internal
+ *
+ * @property-read string $value
  *
  * @author Martin Nielsen <mn@northrook.com>
  */
@@ -103,7 +102,6 @@ final readonly class Attribute implements Stringable
      */
     public static function id( string|array $string, string $separator = '-' ) : string
     {
-
         if ( \class_exists( ASCII::class ) ) {
             $string = \is_array( $string ) ? \implode( $separator, $string ) : $string;
             return ASCII::to_slugify( $string, $separator );
