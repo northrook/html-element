@@ -121,9 +121,9 @@ final class Attributes implements Countable, Stringable
     }
 
     /**
-     * @param string  $attribute
+     * @param string $attribute
      *
-     * @return null|string|array
+     * @return null|array|string
      */
     public function get(
         string $attribute,
@@ -138,6 +138,7 @@ final class Attributes implements Countable, Stringable
                 }
                 return $styles;
             } )(),
+            default => $this->attributes[$attribute] ?? null,
         };
     }
 
@@ -178,7 +179,6 @@ final class Attributes implements Countable, Stringable
                 ],
             );
             return false;
-
         }
 
         if ( \is_array( $attribute ) ) {
