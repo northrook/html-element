@@ -9,6 +9,7 @@ use Interface\Printable;
 use Support\PropertyAccessor;
 
 /**
+ * @property-read string    $tag
  * @property-read string    $html
  * @property-read Attribute $class
  * @property-read Attribute $style
@@ -43,14 +44,14 @@ class Element extends AbstractElement
     /**
      * @param string $property
      *
-     * @return null|Attribute|Attributes|Tag
+     * @return null|Attribute|Attributes|string
      */
-    public function __get( string $property ) : Attribute|Attributes|Tag|null
+    public function __get( string $property ) : Attribute|Attributes|string|null
     {
         // __get is mainly used to facilitate editing attributes
 
         return match ( $property ) {
-            'tag' => $this->tag,
+            'tag' => $this->tag->name,
             'class', 'style' => $this->attributes->edit( $property ),
             default => null,
         };
