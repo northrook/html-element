@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Northrook\HTML\Element;
 
+use JetBrains\PhpStorm\Deprecated;
 use Stringable, LogicException;
 use Support\PropertyAccessor;
 
@@ -19,6 +20,7 @@ trigger_deprecation(
  * @property-read ?string $closingTag
  * @property-read bool    $isSelfClosing
  */
+#[Deprecated]
 final class Tag implements Stringable
 {
     use PropertyAccessor;

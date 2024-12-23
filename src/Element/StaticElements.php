@@ -2,6 +2,7 @@
 
 namespace Northrook\HTML\Element;
 
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\HTML\Element;
 use Support\Arr;
 use function String\filterUrl;
@@ -14,6 +15,7 @@ trigger_deprecation(
 );
 
 
+#[Deprecated]
 trait StaticElements
 {
     public static function link( string $href, array $attributes = [] ) : Element

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Northrook\HTML\Element;
 
+use JetBrains\PhpStorm\Deprecated;
 use Override;
 use const Support\EMPTY_STRING;
 
@@ -13,6 +14,7 @@ trigger_deprecation(
         DefaultAttributes::class,
 );
 
+#[Deprecated]
 trait DefaultAttributes
 {
     protected readonly Tag $tag;

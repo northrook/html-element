@@ -3,6 +3,7 @@
 namespace Northrook\HTML\Element;
 
 use Countable, Stringable;
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\HTML\AbstractElement;
 use Northrook\Logger\Log;
 
@@ -14,6 +15,7 @@ trigger_deprecation(
 );
 
 
+#[Deprecated]
 final class Attributes implements Countable, Stringable
 {
     /** @var array<string, mixed> */

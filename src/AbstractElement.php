@@ -15,6 +15,7 @@ namespace Northrook\HTML;
 
 use Northrook\HTML\Element\{Attributes, Tag};
 use Interface\Printable;
+use JetBrains\PhpStorm\Deprecated;
 use const Support\{WHITESPACE, EMPTY_STRING};
 use function Support\toString;
 use Stringable;
@@ -25,6 +26,7 @@ trigger_deprecation(
         AbstractElement::class,
 );
 
+#[Deprecated]
 class AbstractElement implements Printable
 {
     protected readonly Tag $tag;

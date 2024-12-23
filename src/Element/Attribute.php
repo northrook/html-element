@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Northrook\HTML\Element;
 
 use Northrook\HTML\{AbstractElement, Element};
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\Logger\Log;
 use Support\{Normalize, PropertyAccessor};
 use Stringable, LogicException;
@@ -23,6 +24,7 @@ trigger_deprecation(
  *
  * @author Martin Nielsen <mn@northrook.com>
  */
+#[Deprecated]
 final readonly class Attribute implements Stringable
 {
     use PropertyAccessor;

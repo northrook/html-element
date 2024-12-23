@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Northrook\HTML\Element;
 
+use JetBrains\PhpStorm\Deprecated;
+
 trigger_deprecation(
     'html-element',
     '@Element::use',
     AttributeMethods::class,
 );
 
+#[Deprecated]
 trait AttributeMethods
 {
     public readonly Attributes $attributes;

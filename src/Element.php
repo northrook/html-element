@@ -6,6 +6,7 @@ namespace Northrook\HTML;
 
 use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttributes, StaticElements, Tag};
 use Interface\Printable;
+use JetBrains\PhpStorm\Deprecated;
 use Support\PropertyAccessor;
 
 trigger_deprecation(
@@ -20,6 +21,7 @@ trigger_deprecation(
  * @property-read Attribute $class
  * @property-read Attribute $style
  */
+#[Deprecated]
 class Element extends AbstractElement
 {
     use PropertyAccessor, AttributeMethods, DefaultAttributes, StaticElements;
