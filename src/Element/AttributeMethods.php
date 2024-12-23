@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Northrook\HTML\Element;
 
+trigger_deprecation(
+    'html-element',
+    '@Element::use',
+    AttributeMethods::class,
+);
+
 trait AttributeMethods
 {
     public readonly Attributes $attributes;

@@ -6,6 +6,14 @@ use Northrook\HTML\Element;
 use Support\Arr;
 use function String\filterUrl;
 
+
+trigger_deprecation(
+        'html-element',
+        '@Element::use',
+        StaticElements::class,
+);
+
+
 trait StaticElements
 {
     public static function link( string $href, array $attributes = [] ) : Element

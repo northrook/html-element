@@ -7,6 +7,12 @@ namespace Northrook\HTML\Element;
 use Override;
 use const Support\EMPTY_STRING;
 
+trigger_deprecation(
+        'html-element',
+        '@Element::use',
+        DefaultAttributes::class,
+);
+
 trait DefaultAttributes
 {
     protected readonly Tag $tag;

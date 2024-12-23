@@ -7,6 +7,13 @@ namespace Northrook\HTML\Element;
 use Stringable, LogicException;
 use Support\PropertyAccessor;
 
+
+trigger_deprecation(
+        'html-element',
+        '@Element::tag',
+        Tag::class,
+);
+
 /**
  * @property-read string  $name
  * @property-read ?string $closingTag

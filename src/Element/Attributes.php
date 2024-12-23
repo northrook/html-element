@@ -6,6 +6,14 @@ use Countable, Stringable;
 use Northrook\HTML\AbstractElement;
 use Northrook\Logger\Log;
 
+
+trigger_deprecation(
+        'html-element',
+        '@Element::attributes',
+        Attributes::class,
+);
+
+
 final class Attributes implements Countable, Stringable
 {
     /** @var array<string, mixed> */

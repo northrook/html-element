@@ -19,6 +19,12 @@ use const Support\{WHITESPACE, EMPTY_STRING};
 use function Support\toString;
 use Stringable;
 
+trigger_deprecation(
+        'html-element',
+        '@abstract',
+        AbstractElement::class,
+);
+
 class AbstractElement implements Printable
 {
     protected readonly Tag $tag;

@@ -10,6 +10,12 @@ use Support\{Normalize, PropertyAccessor};
 use Stringable, LogicException;
 use voku\helper\ASCII;
 
+trigger_deprecation(
+    'html-element',
+    '@Element::internal',
+    \Attribute::class,
+);
+
 /**
  * @internal
  *

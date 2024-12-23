@@ -8,6 +8,12 @@ use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes, DefaultAttr
 use Interface\Printable;
 use Support\PropertyAccessor;
 
+trigger_deprecation(
+    'html-element',
+    '@dev',
+    Element::class,
+);
+
 /**
  * @property-read string    $tag
  * @property-read string    $html
